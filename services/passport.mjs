@@ -141,7 +141,7 @@ export const authPassport = (passport, keys) => {
       {
         clientID: keys().googleClientID,
         clientSecret: keys().googleClientSecret,
-        callbackURL: "auth/google/callback",
+        callbackURL: "google/callback",
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
         passReqToCallback: true,
         proxy: true
