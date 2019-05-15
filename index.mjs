@@ -6,10 +6,10 @@ import cookieSession from "cookie-session";
 import session from "express-session";
 import flash from "connect-flash";
 import morgan from "morgan";
-import { authPassport } from "./services/passport";
-import { mainRoutes } from "./routes/mainRoutes";
-import { authRoutes } from "./routes/authRoutes";
-import { keys } from "./config/keys";
+import { authPassport } from "./services/passport.mjs";
+import { mainRoutes } from "./routes/mainRoutes.mjs";
+import { authRoutes } from "./routes/authRoutes.mjs";
+import { keys } from "./config/keys.mjs";
 
 mongoose.connect(keys().mongoURI);
 
