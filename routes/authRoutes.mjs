@@ -1,5 +1,5 @@
-import { isLoggedIn, checkLocal } from "../middleware/authMiddleware";
-import User from "../models/User";
+import { isLoggedIn, checkLocal } from "../middleware/authMiddleware.mjs";
+import User from "../models/User.mjs";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import async from "async";

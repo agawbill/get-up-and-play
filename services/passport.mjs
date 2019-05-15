@@ -1,4 +1,4 @@
-import User from "../models/User";
+import User from "../models/User.mjs";
 import googleOauth20 from "passport-google-oauth20";
 import facebookAuth from "passport-facebook";
 import localAuth from "passport-local";
