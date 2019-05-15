@@ -8,12 +8,9 @@
   },
   "scripts": {
     "clean": "rm -rf build && mkdir build",
-    "build-babel": "babel -d ./build -s",
+    "build-babel": "babel ./build -s",
+    "start": "npm run build && node /build/index.mjs",
     "build": "npm run clean && npm run build-babel",
-    "start": "npm run build && node ./build/src/index.mjs",
-    "client-install": "npm install --prefix client",
-    "client": "npm start --prefix client",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
     "dev": "nodemon --experimental-modules  src/index.mjs"
   },
   "author": "",
