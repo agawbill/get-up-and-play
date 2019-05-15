@@ -8,8 +8,8 @@
   },
   "scripts": {
     "heroku-postbuild": "npm install",
-    "start": "babel-node src/index.mjs",
-    "dev": "nodemon --experimental-modules  src/index.mjs"
+    "start": "babel-node index.mjs",
+    "dev": "nodemon --experimental-modules  index.mjs"
   },
   "author": "",
   "license": "ISC",
