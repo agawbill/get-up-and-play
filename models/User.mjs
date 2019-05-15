@@ -6,12 +6,10 @@ const userSchema = new Schema({
   local: {
     email: {
       type: String,
-      unique: true,
-      required: true
+      unique: true
     },
     password: {
-      type: String,
-      required: true
+      type: String
     },
     active: {
       type: Boolean,
