@@ -1,0 +1,4 @@
+"clean": "rm -rf build && mkdir build",
+"build-babel": "babel ./build -s",
+"start": "npm run build && node /build/index.mjs",
+"build": "npm run clean && npm run build-babel",

@@ -1,0 +1,74 @@
+<!-- views/login.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>GetUp&</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+    <style>
+        body        { padding-top:80px; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<div class="col-sm-6 col-sm-offset-3">
+
+    <h1><span class="fa fa-sign-in"></span> Login</h1>
+
+    <!-- show any messages that come back with authentication -->
+    <% if (message.length > 0) { %>
+        <% if(message[0].indexOf('SUCCESS!') !== -1){ %>
+          <div class="alert alert-success" role="alert">
+            <% for (let i = 0; i < message.length; i++) { %>
+            <%=  message[i] %> <br>
+          <%  } %>
+          </div>
+          <% } else { %>
+          <div class="alert alert-danger" role="alert">
+            <% for (let i = 0; i < message.length; i++) { %>
+            <%=  message[i] %> <br>
+          <%  } %>
+          </div>
+        <% } %>
+    <% } %>
+    <% if (message2.length > 0) { %>
+        <% if(message2[0].indexOf('SUCCESS!') !== -1){ %>
+          <div class="alert alert-success" role="alert">
+            <% for (let i = 0; i < message2.length; i++) { %>
+            <%=  message2[i] %> <br>
+          <%  } %>
+          </div>
+          <% } else { %>
+          <div class="alert alert-danger" role="alert">
+            <% for (let i = 0; i < message2.length; i++) { %>
+            <%=  message2[i] %> <br>
+          <%  } %>
+          </div>
+        <% } %>
+    <% } %>
+    <!-- LOGIN FORM -->
+    <form action="/login" method="post">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="text" class="form-control" name="email">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" name="password">
+        </div>
+
+        <button type="submit" class="btn btn-warning btn-lg">Login</button>
+    </form>
+
+    <hr>
+
+    <p>Need an account? <a href="/signup">Signup</a></p>
+    <p>Forgot password? <a href="/forgot">Forgot Password</a></p>
+    <p>Or go <a href="/">home</a>.</p>
+
+</div>
+
+</div>
+</body>
+</html>
