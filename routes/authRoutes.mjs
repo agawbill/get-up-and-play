@@ -65,6 +65,7 @@ export const authRoutes = (app, passport, keys) => {
 
   app.get("/check-google", (req, res) => {
     let user = req.user;
+    console.log(user);
     if (user.google.active == true) {
       res.redirect("/profile");
     } else {
