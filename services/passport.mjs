@@ -252,7 +252,7 @@ export const authPassport = (passport, keys) => {
         // pull in our app id and secret from our auth.js file
         clientID: keys().facebookAppID,
         clientSecret: keys().facebookAppSecret,
-        callbackURL: "/auth/facebook/callback",
+        callbackURL: keys().facebookCallBackURI,
         profileFields: ["id", "emails", "name"],
         passReqToCallback: true
       },

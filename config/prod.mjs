@@ -4,7 +4,9 @@ export const prod = {
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
   facebookAppID: process.env.FACEBOOK_APP_ID,
   facebookAppSecret: process.env.FACEBOOK_APP_SECRET,
-  gmailPW: process.env.GMAILPW
+  gmailPW: process.env.GMAILPW,
+  facebookCallBackURI:
+    "https://getup-and-play.herokuapp.com/auth/facebook/callback"
 };
 
 // production mongo uri
