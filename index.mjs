@@ -13,6 +13,8 @@ import { keys } from "./config/keys.mjs";
 
 mongoose.connect(keys().mongoURI);
 
+console.log(keys());
+
 const app = express();
 
 app.set("view engine", "ejs");
