@@ -1,5 +1,5 @@
-import { prod } from "../config/prod";
-import { dev } from "../config/dev";
+import { prod } from "../config/prod.mjs";
+import { dev } from "../config/dev.mjs";
 
 export const keys = () => {
   if (process.env.NODE_ENV === "production") {
