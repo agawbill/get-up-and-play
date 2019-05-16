@@ -6,7 +6,8 @@ const userSchema = new Schema({
   local: {
     email: {
       type: String,
-      unique: true
+      unique: true,
+      sparse: true
     },
     password: {
       type: String
