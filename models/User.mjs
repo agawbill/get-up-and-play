@@ -9,6 +9,10 @@ const userSchema = new Schema({
       unique: true,
       sparse: true
     },
+    temp_email: {
+      type: String,
+      sparse: true
+    },
     password: {
       type: String
     },

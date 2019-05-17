@@ -154,6 +154,9 @@ export const authPassport = (passport, keys) => {
           let existingUserLocal = await User.findOne({
             "local.email": profile._json.email
           });
+          let existingUserLocalTemp = await User.findOne({
+            "local.temp_email": profile._json.email
+          });
           if (existingUser) {
             // already have a record
             return done(null, existingUser);
@@ -162,37 +165,48 @@ export const authPassport = (passport, keys) => {
           }
           // checking to see if local email is registered
           if (existingUserLocal) {
-            if (existingUserLocal.local.email == profile._json.email) {
-              // link to the current local account if a common email is found
+            existingUserLocal.google.id = profile.id;
+            existingUserLocal.google.token = token;
+            existingUserLocal.google.name = `${profile._json.name}`;
+            existingUserLocal.google.email = profile._json.email;
+            existingUserLocal.facebook.active = true;
 
-              existingUserLocal.google.id = profile.id;
-              existingUserLocal.google.token = token;
-              existingUserLocal.google.name = `${profile._json.name}`;
-              existingUserLocal.google.email = profile._json.email;
-              existingUserLocal.facebook.active = true;
-
-              // save the user
-              existingUserLocal.save(err => {
-                if (err) throw err;
-                return done(null, existingUserLocal);
-              });
-            }
-          } else {
-            if (existingUser) {
-              // already have a record
-              return done(null, existingUser);
-              // what you need to call once passport has finished authenticating
-              // null indicates no error, second argument is user recor
-            }
-            let user = await new User({
-              "google.id": profile.id,
-              "google.email": profile._json.email,
-              "google.token": token,
-              "google.name": profile._json.name,
-              "google.active": true
-            }).save();
-            done(null, user);
+            // save the user
+            existingUserLocal.save(err => {
+              if (err) throw err;
+              return done(null, existingUserLocal);
+            });
           }
+
+          // Below, it's going to check if someone has already attempted to create an account with their social media, but failed to link a local account
+          // (hit the back button before completing the local registeration after signing up with a social media account)
+          // A temporary email is saved to the database so a new record isn't created in the database for the aborted social media sign up, and
+          // the app will find the record based on the temp email that was added during the oauth, and then add the local email to that record once
+          // local registeration is conplete
+          if (existingUserLocalTemp) {
+            existingUserLocalTemp.google.id = profile.id;
+            existingUserLocalTemp.google.token = token;
+            existingUserLocalTemp.google.name = `${profile._json.name}`;
+            existingUserLocalTemp.google.email = profile._json.email;
+            existingUserLocalTemp.facebook.active = true;
+
+            // save the user
+            existingUserLocalTemp.save(err => {
+              if (err) throw err;
+              return done(null, existingUserLocalTemp);
+            });
+          }
+          //No temp or local account found, register new email/social media account
+          let user = await new User({
+            "local.temp_email": profile._json.email,
+            "google.id": profile.id,
+            "google.email": profile._json.email,
+            "google.token": token,
+            "google.name": profile._json.name,
+            "google.active": true
+          }).save();
+          done(null, user);
+          // }
         } else {
           // user already exists and is logged in, we have to link accounts
           let user = req.user; // pull the user out of the session
@@ -210,10 +224,13 @@ export const authPassport = (passport, keys) => {
               return done(null, user);
             });
           } else {
-            // if there is no local email that matches the linked social media account's emaail, create a new account
+            // if there is no local email that matches the linked social media account's email, create a new account
 
             let existingUser = await User.findOne({
               "google.id": profile.id
+            });
+            let existingUserLocalTemp = await User.findOne({
+              "local.temp_email": profile._json.email
             });
 
             if (existingUser) {
@@ -223,7 +240,30 @@ export const authPassport = (passport, keys) => {
               // null indicates no error, second argument is user recor
             }
 
+            // Below, it's going to check if someone has already attempted to create an account with their social media, but failed to link a local account
+            // (hit the back button before completing the local registeration after signing up with a social media account)
+            // A temporary email is saved to the database so a new record isn't created in the database for the aborted social media sign up, and
+            // the app will find the record based on the temp email that was added during the oauth, and then add the local email to that record once
+            // local registeration is conplete
+
+            if (existingUserLocalTemp) {
+              existingUserLocalTemp.google.id = profile.id;
+              existingUserLocalTemp.google.token = token;
+              existingUserLocalTemp.google.name = `${profile._json.name}`;
+              existingUserLocalTemp.google.email = profile._json.email;
+              existingUserLocalTemp.facebook.active = true;
+
+              // save the user
+              existingUserLocalTemp.save(err => {
+                if (err) throw err;
+                return done(null, existingUserLocalTemp);
+              });
+            }
+            // Below, because there's no local email address that matches this new social media account you want to link, a new account will be created...
+            // Where you'll be forced to register this new email
+
             let user = await new User({
+              "local.temp_email": profile._json.email,
               "google.id": profile.id,
               "google.email": profile._json.email,
               "google.token": token,
@@ -266,6 +306,9 @@ export const authPassport = (passport, keys) => {
           let existingUserLocal = await User.findOne({
             "local.email": profile._json.email
           });
+          let existingUserLocalTemp = await User.findOne({
+            "local.temp_email": profile._json.email
+          });
           // if there is an error, stop everything and return that
           // ie an error connecting to the database
           if (existingUser) {
@@ -274,24 +317,48 @@ export const authPassport = (passport, keys) => {
 
           // checking to see if local email is registered
           if (existingUserLocal) {
-            if (existingUserLocal.local.email == profile._json.email) {
-              // link to the current local account if a common email is found
-              existingUserLocal.facebook.id = profile.id;
-              existingUserLocal.facebook.token = token; // we will save the token that facebook provides to the user
-              existingUserLocal.facebook.name = `${profile._json.first_name} ${
-                profile._json.last_name
-              }`;
-              existingUserLocal.facebook.email = profile._json.email;
-              existingUserLocal.facebook.active = true;
+            // if (existingUserLocal.local.email == profile._json.email) {
+            // link to the current local account if a common email is found
+            existingUserLocal.facebook.id = profile.id;
+            existingUserLocal.facebook.token = token; // we will save the token that facebook provides to the user
+            existingUserLocal.facebook.name = `${profile._json.first_name} ${
+              profile._json.last_name
+            }`;
+            existingUserLocal.facebook.email = profile._json.email;
+            existingUserLocal.facebook.active = true;
 
-              // save the user
-              existingUserLocal.save(err => {
-                if (err) throw err;
-                return done(null, existingUserLocal);
-              });
-            }
+            // save the user
+            existingUserLocal.save(err => {
+              if (err) throw err;
+              return done(null, existingUserLocal);
+            });
+            // }
+          }
+          // IF there's no active session...
+          // Below, it's going to check if someone has already attempted to create an account with their social media, but failed to link a local account
+          // (hit the back button before completing the local registeration after signing up with a social media account)
+          // A temporary email is saved to the database so a new record isn't created in the database for the aborted social media sign up, and
+          // the app will find the record based on the temp email that was added during the oauth, and then add the local email to that record once
+          // local registeration is conplete
+          if (existingUserLocalTemp) {
+            existingUserLocalTemp.facebook.id = profile.id;
+            existingUserLocalTemp.facebook.token = token; // we will save the token that facebook provides to the user
+            existingUserLocalTemp.facebook.name = `${
+              profile._json.first_name
+            } ${profile._json.last_name}`;
+            existingUserLocalTemp.facebook.email = profile._json.email;
+            existingUserLocalTemp.facebook.active = true;
+
+            // save the user
+            existingUserLocalTemp.save(err => {
+              if (err) throw err;
+              return done(null, existingUserLocalTemp);
+            });
           } else {
+            // Below, because there's no local email address that matches this new social media account you want to link, a new account will be created...
+            // Where you'll be forced to register this new email
             let newUser = await new User({
+              "local.temp_email": profile._json.email,
               "facebook.id": profile.id, // set the users facebook id
               "facebook.token": token, // we will save the token that facebook provides to the user
               "facebook.name": `${profile._json.first_name} ${
@@ -326,30 +393,61 @@ export const authPassport = (passport, keys) => {
             let existingUser = await User.findOne({
               "facebook.id": profile.id
             });
+
+            let existingUserLocalTemp = await User.findOne({
+              "local.temp_email": profile._json.email
+            });
+            // if t
             if (existingUser) {
               // already have a record
               return done(null, existingUser);
               // what you need to call once passport has finished authenticating
               // null indicates no error, second argument is user recor
             }
-            let newUser = await new User({
-              "facebook.id": profile.id, // set the users facebook id
-              "facebook.token": token, // we will save the token that facebook provides to the user
-              "facebook.name": `${profile._json.first_name} ${
-                profile._json.last_name
-              }`, // look at the passport user profile to see how names are returned
-              "facebook.email": profile._json.email, // facebook can return multiple emails so we'll take the first});
-              "facebook.active": true
-            }).save();
-            // if successful, return the new user
-            done(
-              null,
-              newUser,
-              req.flash(
-                "signupMessage",
-                "Email is different than local account. Create a new account for this email."
-              )
-            );
+
+            // Below, it's going to check if someone has already attempted to create an account with their social media, but failed to link a local account
+            // (hit the back button before completing the local registeration after signing up with a social media account)
+            // A temporary email is saved to the database so a new record isn't created in the database for the aborted social media sign up, and
+            // the app will find the record based on the temp email that was added during the oauth, and then add the local email to that record once
+            // local registeration is conplete
+
+            if (existingUserLocalTemp) {
+              existingUserLocalTemp.facebook.id = profile.id;
+              existingUserLocalTemp.facebook.token = token; // we will save the token that facebook provides to the user
+              existingUserLocalTemp.facebook.name = `${
+                profile._json.first_name
+              } ${profile._json.last_name}`;
+              existingUserLocalTemp.facebook.email = profile._json.email;
+              existingUserLocalTemp.facebook.active = true;
+
+              // save the user
+              existingUserLocalTemp.save(err => {
+                if (err) throw err;
+                return done(null, existingUserLocalTemp);
+              });
+            } else {
+              // Below, because there's no local email address that matches this new social media account you want to link, a new account will be created...
+              // Where you'll be forced to register this new email
+              let newUser = await new User({
+                "local.temp_email": profile._json.email,
+                "facebook.id": profile.id, // set the users facebook id
+                "facebook.token": token, // we will save the token that facebook provides to the user
+                "facebook.name": `${profile._json.first_name} ${
+                  profile._json.last_name
+                }`, // look at the passport user profile to see how names are returned
+                "facebook.email": profile._json.email, // facebook can return multiple emails so we'll take the first});
+                "facebook.active": true
+              }).save();
+              // if successful, return the new user
+              done(
+                null,
+                newUser,
+                req.flash(
+                  "signupMessage",
+                  "Email is different than local account. Create a new account for this email."
+                )
+              );
+            }
           }
         }
       }
