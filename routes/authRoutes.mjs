@@ -343,7 +343,7 @@ export const authRoutes = (app, passport, keys) => {
               userLocal.password = user.generateHash(req.body.password);
               user.resetPasswordToken = undefined;
               user.resetPasswordTokenExpires = undefined;
-              user.save(function(err) {
+              user.save(err => {
                 done(err, user);
               });
             }
