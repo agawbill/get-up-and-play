@@ -8,5 +8,3 @@ export const prod = {
   facebookCallBackURI:
     "https://getup-and-play.herokuapp.com/auth/facebook/callback"
 };
-
-// production mongo uri

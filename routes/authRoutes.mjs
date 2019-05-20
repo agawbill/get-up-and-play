@@ -125,9 +125,9 @@ export const authRoutes = (app, passport, keys) => {
   app.post(
     "/connect/local",
     passport.authenticate("local-signup", {
-      successRedirect: "/profile", // redirect to the secure profile section
-      failureRedirect: "/connect/local", // redirect back to the signup page if there is an error
-      failureFlash: true // allo••••••w flash messages
+      successRedirect: "/profile",
+      failureRedirect: "/connect/local",
+      failureFlash: true
     })
   );
 
