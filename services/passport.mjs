@@ -52,7 +52,7 @@ export const authPassport = (passport, keys) => {
           if (password !== req.body.confirmPassword) {
             errors.push("The passwords do not match.");
           }
-          if (password.length < 7) {
+          if (password.length < 8) {
             errors.push("The password is too short.");
           }
           if (!password.match(/[A-Z]/)) {

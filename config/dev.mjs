@@ -7,5 +7,6 @@ export const dev = {
   facebookAppID: "377526206426057",
   facebookAppSecret: "46e1ca8f0f5b2e9a0998d84f318937c1",
   gmailPW: "thisIsATest!#",
-  facebookCallBackURI: "/auth/facebook/callback"
+  facebookCallBackURI: "/auth/facebook/callback",
+  cookieSecret: "keyboard cat"
 };

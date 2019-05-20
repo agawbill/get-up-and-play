@@ -19,7 +19,7 @@ app.set("view engine", "ejs");
 
 app.use(
   session({
-    secret: "keyboard cat",
+    secret: keys().cookieSecret,
     proxy: true,
     resave: true,
     saveUninitialized: true
