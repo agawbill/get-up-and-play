@@ -1,8 +1,6 @@
 export const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
-    if (req.user.local.confirmed == true) {
-      return next();
-    }
+    return next();
   }
   res.redirect("/");
 };
