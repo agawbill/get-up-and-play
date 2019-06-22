@@ -273,7 +273,7 @@ export const authRoutes = (app, passport, keys) => {
     if (user.local.confirmed == true) {
       return res.redirect("/profile");
     }
-    if (user.local.confirmTokenExpires < date) {
+    if (user.local.confirmTokenExpires > date) {
       res.render("confirmed-local", {
         expiredToken: false,
         email: user.local.email,
