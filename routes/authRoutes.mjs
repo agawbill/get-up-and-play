@@ -315,6 +315,7 @@ export const authRoutes = (app, passport, keys) => {
         });
       }
     );
+    res.send("success!");
   });
 
   app.get("/resend-token/:token", async (req, res) => {
