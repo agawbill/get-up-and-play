@@ -1,0 +1,86 @@
+<!-- views/connect-local.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>GetUp&Play</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        body        { padding-top:80px; }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <div class="col-sm-6 col-sm-offset-3">
+
+        <h1><span class="fa fa-user"></span> Please Confirm Email</h1>
+
+        <% if (message.length > 0) { %>
+          <div class="alert alert-danger">
+            <% for (let i = 0; i < message.length; i++) { %>
+            <%=  message[i] %> <br>
+          <%  } %>
+          </div>
+        <% } %>
+
+          <div id="alertDiv">
+            </br>
+            Generating email...
+
+            </div>
+
+
+
+
+
+
+        <hr>
+
+        <p><a href="/">Go Home</a></p>
+
+    </div>
+  </div>
+</body>
+<script>
+const alertDiv=document.querySelector("#alertDiv");
+  document.addEventListener('DOMContentLoaded',()=>{
+    const dataToSend = JSON.stringify({ email: `<%=email%>` });
+
+
+    fetch("http://localhost:5000/confirm-local", {
+      credentials: "same-origin",
+      mode: "same-origin",
+      method: "post",
+      headers: { "content-type": "application/json" },
+      redirect: "follow",
+      body: dataToSend
+    })
+      .then(resp => {
+        if (resp.status == 200) {
+          console.log(resp);
+          return resp;
+        } else {
+          console.log("Status: " + resp.status);
+
+          return Promise.reject("server");
+        }
+      })
+
+      .then(dataJson => {
+        console.log("success!")
+        alertDiv.innerHTML = `</br>An email has been sent to <b><%=email%></b> with a link to confirm your email address.`;
+      })
+
+      .catch(err => {
+        if (err == "server") {
+          alertDiv.innerHTML = `</br>Sorry, something went wrong. Please try again.`;
+        }
+        console.log(err);
+        return;
+      });
+
+})
+  </script>
+</html>

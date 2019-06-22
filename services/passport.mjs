@@ -2,6 +2,7 @@ import User from "../models/User.mjs";
 import googleOauth20 from "passport-google-oauth20";
 import facebookAuth from "passport-facebook";
 import localAuth from "passport-local";
+import { signUpValidator } from "../middleware/validations.mjs";
 
 const GoogleStrategy = googleOauth20.Strategy;
 const FacebookStrategy = facebookAuth.Strategy;
@@ -28,6 +29,12 @@ export const authPassport = (passport, keys) => {
         passReqToCallback: true
       },
       async (req, email, password, done) => {
+        const firstName = `${req.body.firstName
+          .charAt(0)
+          .toUpperCase()}${req.body.firstName.slice(1)}`;
+        const lastName = `${req.body.lastName
+          .charAt(0)
+          .toUpperCase()}${req.body.lastName.slice(1)}`;
         // asynchronous
 
         //  Whether we're signing up or connecting an account, we'll need
@@ -36,7 +43,20 @@ export const authPassport = (passport, keys) => {
           // if there are any errors, return the error
           if (err) return done(err);
 
+          // const confirmPassword = req.body.confirmPassword;
+
           // validations for email and password are below
+
+          // signUpValidator(
+          //   req,
+          //   email,
+          //   firstName,
+          //   lastName,
+          //   existingUser,
+          //   password,
+          //   confirmPassword,
+          //   done
+          // );
 
           const errors = [];
 
@@ -64,7 +84,18 @@ export const authPassport = (passport, keys) => {
           if (!password.match(/[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/)) {
             errors.push("Password must contain at least one special symbol.");
           }
-
+          if (firstName < 1) {
+            errors.push("First name must be at least one character.");
+          }
+          if (firstName.match(/[0-9!$%^&*()_+|~={}\[\]:\/;<>?,.@#]/)) {
+            errors.push("First name is not valid.");
+          }
+          if (lastName < 1) {
+            errors.push("Last name must be at least one character.");
+          }
+          if (lastName.match(/[0-9!$%^&*()_+|~={}\[\]:\/;<>?,.@#]/)) {
+            errors.push("Last name is not valid.");
+          }
           if (errors.length > 0) {
             return done(null, false, req.flash("signupMessage", errors));
           }
@@ -74,6 +105,10 @@ export const authPassport = (passport, keys) => {
             let user = req.user;
             user.local.email = email;
             user.local.password = user.generateHash(password);
+            user.local.firstName = firstName;
+            user.local.lastName = lastName;
+            user.local.fullName = `${firstName} ${lastName}`;
+            user.local.confirmed = false;
             user.save(err => {
               if (err) throw err;
               return done(null, user);
@@ -85,7 +120,11 @@ export const authPassport = (passport, keys) => {
             let newUser = new User();
 
             newUser.local.email = email;
+            newUser.local.firstName = firstName;
+            newUser.local.lastName = lastName;
+            newUser.local.fullName = `${firstName} ${lastName}`;
             newUser.local.password = newUser.generateHash(password);
+            newUser.local.confirmed = false;
 
             newUser.save(function(err) {
               if (err) throw err;
@@ -166,7 +205,7 @@ export const authPassport = (passport, keys) => {
             // null indicates no error, second argument is user record
           }
           // checking to see if local email is registered
-          if (existingUserLocal) {
+          else if (existingUserLocal) {
             // if a local email exists that matches the social media email for this user, instead of creating a new record in the database, simply add
             // the google account information to that record to avoid creating a new record
             existingUserLocal.google.id = profile.id;
@@ -188,8 +227,7 @@ export const authPassport = (passport, keys) => {
           // The app will search if that temp email matches the email of whatever social media they're trying to register with now.
           //  IF it matches, they'll be able to add their soeicla media credentials to the record, and then local credentials
           //  This is done to avoid creating a new, unecessary record in the database if a user doesn't complete registration
-
-          if (existingUserLocalTemp) {
+          else if (existingUserLocalTemp) {
             existingUserLocalTemp.google.id = profile.id;
             existingUserLocalTemp.google.token = token;
             existingUserLocalTemp.google.name = `${profile._json.name}`;
@@ -201,18 +239,19 @@ export const authPassport = (passport, keys) => {
               if (err) throw err;
               return done(null, existingUserLocalTemp);
             });
+          } else {
+            //No temp or local account found, register new email/social media account
+            let user = await new User({
+              "local.temp_email": profile._json.email,
+              "google.id": profile.id,
+              "google.email": profile._json.email,
+              "google.token": token,
+              "google.name": profile._json.name,
+              "google.active": true
+            }).save();
+            done(null, user);
+            // }
           }
-          //No temp or local account found, register new email/social media account
-          let user = await new User({
-            "local.temp_email": profile._json.email,
-            "google.id": profile.id,
-            "google.email": profile._json.email,
-            "google.token": token,
-            "google.name": profile._json.name,
-            "google.active": true
-          }).save();
-          done(null, user);
-          // }
         } else {
           // user already exists and is logged in, we have to link accounts
           let user = req.user; // pull the user out of the session
@@ -307,12 +346,15 @@ export const authPassport = (passport, keys) => {
       // facebook will send back the token and profile
       async (req, token, refreshToken, profile, done) => {
         // asynchronous
-        // find the user in the database based on their facebook id
+        // if there's no current user signed in
         if (!req.user) {
+          // find the user in the database based on their facebook id
           let existingUser = await User.findOne({ "facebook.id": profile.id });
+          // find the user based on their local email
           let existingUserLocal = await User.findOne({
             "local.email": profile._json.email
           });
+          // see if a user tried to register and aborted, leaving a temp email
           let existingUserLocalTemp = await User.findOne({
             "local.temp_email": profile._json.email
           });
@@ -323,7 +365,7 @@ export const authPassport = (passport, keys) => {
           }
 
           // checking to see if local email is registered
-          if (existingUserLocal) {
+          else if (existingUserLocal) {
             // if (existingUserLocal.local.email == profile._json.email) {
             // link to the current local account if a common email is found
             existingUserLocal.facebook.id = profile.id;
@@ -348,8 +390,7 @@ export const authPassport = (passport, keys) => {
           // The app will search if that temp email matches the email of whatever social media they're trying to register with now.
           //  IF it matches, they'll be able to add their soeicla media credentials to the record, and then local credentials
           //  This is done to avoid creating a new, unecessary record in the database if a user doesn't complete registration
-
-          if (existingUserLocalTemp) {
+          else if (existingUserLocalTemp) {
             existingUserLocalTemp.facebook.id = profile.id;
             existingUserLocalTemp.facebook.token = token; // we will save the token that facebook provides to the user
             existingUserLocalTemp.facebook.name = `${

@@ -9,6 +9,7 @@ import morgan from "morgan";
 import { authPassport } from "./services/passport.mjs";
 import { mainRoutes } from "./routes/mainRoutes.mjs";
 import { authRoutes } from "./routes/authRoutes.mjs";
+import { friendRoutes } from "./routes/friendRoutes.mjs";
 import { keys } from "./config/keys.mjs";
 
 mongoose.connect(keys().mongoURI);
@@ -36,6 +37,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 mainRoutes(app);
 authRoutes(app, passport, keys);
 authPassport(passport, keys);
+friendRoutes(app);
 
 const PORT = process.env.PORT || 5000;
 

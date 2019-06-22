@@ -4,6 +4,18 @@ import bcrypt from "bcrypt-nodejs";
 
 const userSchema = new Schema({
   local: {
+    firstName: {
+      type: String,
+      sparse: true
+    },
+    lastName: {
+      type: String,
+      sparse: true
+    },
+    fullName: {
+      type: String,
+      sparse: true
+    },
     email: {
       type: String,
       unique: true,
@@ -11,15 +23,20 @@ const userSchema = new Schema({
     },
     temp_email: {
       type: String,
+      // select: false,
       sparse: true
     },
     password: {
       type: String
+      // select: false
     },
-    active: {
+    confirmed: {
       type: Boolean,
+      // select: false,
       default: false
-    }
+    },
+    confirmToken: String,
+    confirmTokenExpires: Date
   },
   facebook: {
     id: String,
@@ -52,7 +69,8 @@ const userSchema = new Schema({
     }
   },
   resetPasswordToken: String,
-  resetPasswordTokenExpires: Date
+  resetPasswordTokenExpires: Date,
+  friends: Array
 });
 
 userSchema.methods.generateHash = function(password) {
