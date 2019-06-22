@@ -299,39 +299,30 @@ export const authRoutes = (app, passport, keys) => {
   });
 
   app.post("/confirmed-local/:token", async (req, res) => {
-    try {
-      const user = await User.findOne(
-        {
-          "local.confirmToken": req.body.token,
-          "local.confirmTokenExpires": { $gt: Date.now() }
-        },
-        (err, user) => {
-          if (!user) {
-            console.log(err);
-            return;
-          }
-
-          // password validations
-
-          // if no errors, change the password
-
-          user.local.confirmed = true;
-          user.local.confirmToken = undefined;
-          user.local.confirmTokenExpires = undefined;
-          user.save(err => {
-            return user;
-          });
+    // try {
+    const user = await User.findOne(
+      {
+        "local.confirmToken": req.body.token,
+        "local.confirmTokenExpires": { $gt: Date.now() }
+      },
+      (err, user) => {
+        if (!user) {
+          console.log(err);
+          return;
         }
-      );
-      console.log(user);
-      return res.send("success!");
-    } catch {
-      err => {
-        if (err) next(err);
-        console.log(err);
-        return;
-      };
-    }
+
+        // password validations
+
+        // if no errors, change the password
+
+        user.local.confirmed = true;
+        user.local.confirmToken = undefined;
+        user.local.confirmTokenExpires = undefined;
+        user.save(err => {
+          return user;
+        });
+      }
+    );
   });
 
   app.get("/resend-token/:token", async (req, res) => {
