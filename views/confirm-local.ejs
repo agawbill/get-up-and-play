@@ -49,7 +49,7 @@ const alertDiv=document.querySelector("#alertDiv");
     const dataToSend = JSON.stringify({ email: `<%=email%>` });
 
 
-    fetch("http://localhost:5000/confirm-local", {
+    fetch("/confirm-local", {
       credentials: "same-origin",
       mode: "same-origin",
       method: "post",
