@@ -155,7 +155,7 @@ export const authRoutes = (app, passport, keys) => {
   app.get(
     "/connect/facebook/callback",
     passport.authorize("facebook", {
-      successRedirect: "/profile",
+      successRedirect: "/check-local",
       failureRedirect: "/"
     })
   );
@@ -170,7 +170,7 @@ export const authRoutes = (app, passport, keys) => {
   app.get(
     "/connect/google/callback",
     passport.authorize("google", {
-      successRedirect: "/profile",
+      successRedirect: "/check-local",
       failureRedirect: "/"
     })
   );
@@ -197,7 +197,7 @@ export const authRoutes = (app, passport, keys) => {
 
   // confirm local email address before registering
 
-  app.get("/confirm-local", isLoggedIn, (req, res) => {
+  app.get("/confirm-local", (req, res) => {
     let user = req.user;
     if (user.local.confirmed == true) {
       return res.redirect("/profile");
