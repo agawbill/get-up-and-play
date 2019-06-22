@@ -209,64 +209,56 @@ export const authRoutes = (app, passport, keys) => {
   });
 
   app.post("/confirm-local", async (req, res) => {
-    try {
-      // create token
-      let token = await crypto.randomBytes(20, (err, buf) => {
-        return (token = buf.toString("hex"));
-      });
+    // create token
+    let token = await crypto.randomBytes(20, (err, buf) => {
+      return (token = buf.toString("hex"));
+    });
 
-      // token is passed to next function, search for email in DB
-      const user = await User.findOne(
-        { "local.email": req.body.email },
-        (err, user) => {
-          if (!user) {
-            // if a user with that email can't be found, redirect back home
-            return res.redirect("/");
-          }
-
-          if (user.local.confirmed == true) {
-            return res.redirect("/profile");
-          }
-          // if a user is found with that email, save a token and a token expiration date to that user's object in the db
-          user.local.confirmToken = token;
-          user.local.confirmTokenExpires = Date.now() + 360000; // 1 hour
-          user.save(err => {
-            return user;
-          });
+    // token is passed to next function, search for email in DB
+    const user = await User.findOne(
+      { "local.email": req.body.email },
+      (err, user) => {
+        if (!user) {
+          // if a user with that email can't be found, redirect back home
+          return res.redirect("/");
         }
-      );
 
-      // send email to that user with password reset link with token
-      const smtpTransport = await nodemailer.createTransport({
-        service: "Gmail",
-        auth: {
-          user: "getupandplay1@gmail.com",
-          pass: keys().gmailPW
+        if (user.local.confirmed == true) {
+          return res.redirect("/profile");
         }
-      });
-      const mailOptions = await {
-        to: user.local.email,
-        from: "GetUpAndPlay1@gmail.com",
-        subject: "Confirm Email",
-        text: `You are receiving this message because you (or someone else) has registered using this email, ${
-          user.local.email
-        }, at GetUp & Play! If you did not register, please disregard this email.
+        // if a user is found with that email, save a token and a token expiration date to that user's object in the db
+        user.local.confirmToken = token;
+        user.local.confirmTokenExpires = Date.now() + 360000; // 1 hour
+        user.save(err => {
+          return user;
+        });
+      }
+    );
+
+    // send email to that user with password reset link with token
+    const smtpTransport = await nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "getupandplay1@gmail.com",
+        pass: keys().gmailPW
+      }
+    });
+    const mailOptions = await {
+      to: user.local.email,
+      from: "GetUpAndPlay1@gmail.com",
+      subject: "Confirm Email",
+      text: `You are receiving this message because you (or someone else) has registered using this email, ${
+        user.local.email
+      }, at GetUp & Play! If you did not register, please disregard this email.
         If you did, please click this link: http://${
           req.headers.host
         }/confirmed-local/${token} to complete registration and confirm your email address.`
-      };
-      await smtpTransport.sendMail(mailOptions, err => {
-        console.log("mail sent");
+    };
+    await smtpTransport.sendMail(mailOptions, err => {
+      console.log("mail sent");
 
-        return res.send("success");
-      });
-    } catch {
-      err => {
-        if (err) next(err);
-
-        return res.send("failure");
-      };
-    }
+      return res.send("success");
+    });
   });
 
   // FULLY CONFIRM EMAIL
@@ -352,64 +344,56 @@ export const authRoutes = (app, passport, keys) => {
   });
 
   app.post("/resend-token/:token", async (req, res) => {
-    try {
-      // create token
-      let token = await crypto.randomBytes(20, (err, buf) => {
-        return (token = buf.toString("hex"));
-      });
+    // create token
+    let token = await crypto.randomBytes(20, (err, buf) => {
+      return (token = buf.toString("hex"));
+    });
 
-      // token is passed to next function, search for email in DB
-      const user = await User.findOne(
-        { "local.confirmToken": req.params.token },
-        (err, user) => {
-          if (!user) {
-            // if a user with that email can't be found, redirect back home
-            return res.redirect("/");
-          }
-
-          if (user.local.confirmed == true) {
-            return res.redirect("/profile");
-          }
-          // if a user is found with that email, save a token and a token expiration date to that user's object in the db
-          user.local.confirmToken = token;
-          user.local.confirmTokenExpires = Date.now() + 360000; // 1 hour
-          user.save(err => {
-            return user;
-          });
+    // token is passed to next function, search for email in DB
+    const user = await User.findOne(
+      { "local.confirmToken": req.params.token },
+      (err, user) => {
+        if (!user) {
+          // if a user with that email can't be found, redirect back home
+          return res.redirect("/");
         }
-      );
 
-      // send email to that user with password reset link with token
-      const smtpTransport = await nodemailer.createTransport({
-        service: "Gmail",
-        auth: {
-          user: "getupandplay1@gmail.com",
-          pass: keys().gmailPW
+        if (user.local.confirmed == true) {
+          return res.redirect("/profile");
         }
-      });
-      const mailOptions = await {
-        to: user.local.email,
-        from: "GetUpAndPlay1@gmail.com",
-        subject: "Confirm Email",
-        text: `You are receiving this message because you (or someone else) has registered using this email, ${
-          user.local.email
-        }, at GetUp & Play! If you did not register, please disregard this email.
+        // if a user is found with that email, save a token and a token expiration date to that user's object in the db
+        user.local.confirmToken = token;
+        user.local.confirmTokenExpires = Date.now() + 360000; // 1 hour
+        user.save(err => {
+          return user;
+        });
+      }
+    );
+
+    // send email to that user with password reset link with token
+    const smtpTransport = await nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "getupandplay1@gmail.com",
+        pass: keys().gmailPW
+      }
+    });
+    const mailOptions = await {
+      to: user.local.email,
+      from: "GetUpAndPlay1@gmail.com",
+      subject: "Confirm Email",
+      text: `You are receiving this message because you (or someone else) has registered using this email, ${
+        user.local.email
+      }, at GetUp & Play! If you did not register, please disregard this email.
           If you did, please click this link: http://${
             req.headers.host
           }/confirmed-local/${token} to complete registration and confirm your email address.`
-      };
-      await smtpTransport.sendMail(mailOptions, err => {
-        console.log("mail sent");
+    };
+    await smtpTransport.sendMail(mailOptions, err => {
+      console.log("mail sent");
 
-        return res.send("success");
-      });
-    } catch {
-      err => {
-        if (err) next(err);
-
-        return res.send("failure");
-      };
-    }
+      return res.send("success");
+    });
   });
 
   // FORGOT PASSWORD ROUTES-------------------
@@ -420,66 +404,59 @@ export const authRoutes = (app, passport, keys) => {
   });
 
   app.post("/forgot", async (req, res, next) => {
-    try {
-      // create token
-      let token = await crypto.randomBytes(20, (err, buf) => {
-        return (token = buf.toString("hex"));
-      });
+    // create token
+    let token = await crypto.randomBytes(20, (err, buf) => {
+      return (token = buf.toString("hex"));
+    });
 
-      // token is passed to next function, search for email in DB
-      const user = await User.findOne(
-        { "local.email": req.body.email },
-        (err, user) => {
-          if (!user) {
-            // if a user with that email can't be found, flash this error, redirect back to forgot page
-            req.flash(
-              "forgotMessage",
-              "No account with that email address exists."
-            );
-            return res.redirect("/forgot");
-          }
-          // if a user is found with that email, save a token and a token expiration date to that user's object in the db
-          user.resetPasswordToken = token;
-          user.resetPasswordTokenExpires = Date.now() + 360000; // 1 hour
-          user.save(err => {
-            return user;
-          });
+    // token is passed to next function, search for email in DB
+    const user = await User.findOne(
+      { "local.email": req.body.email },
+      (err, user) => {
+        if (!user) {
+          // if a user with that email can't be found, flash this error, redirect back to forgot page
+          req.flash(
+            "forgotMessage",
+            "No account with that email address exists."
+          );
+          return res.redirect("/forgot");
         }
-      );
+        // if a user is found with that email, save a token and a token expiration date to that user's object in the db
+        user.resetPasswordToken = token;
+        user.resetPasswordTokenExpires = Date.now() + 360000; // 1 hour
+        user.save(err => {
+          return user;
+        });
+      }
+    );
 
-      // send email to that user with password reset link with token
-      const smtpTransport = await nodemailer.createTransport({
-        service: "Gmail",
-        auth: {
-          user: "getupandplay1@gmail.com",
-          pass: keys().gmailPW
-        }
-      });
-      const mailOptions = await {
-        to: user.local.email,
-        from: "GetUpAndPlay1@gmail.com",
-        subject: "Password Reset",
-        text: `You are receiving this message because you (or someone else) have requested a password reset for your account on GET UP AND PLAY!
+    // send email to that user with password reset link with token
+    const smtpTransport = await nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "getupandplay1@gmail.com",
+        pass: keys().gmailPW
+      }
+    });
+    const mailOptions = await {
+      to: user.local.email,
+      from: "GetUpAndPlay1@gmail.com",
+      subject: "Password Reset",
+      text: `You are receiving this message because you (or someone else) have requested a password reset for your account on GET UP AND PLAY!
           Please click this link: http://${req.headers.host}/reset/${token}
           If you did NOT request a password reset, please ignore this email and your password will remain the same.
           `
-      };
-      await smtpTransport.sendMail(mailOptions, err => {
-        console.log("mail sent");
-        req.flash(
-          "forgotMessage",
-          `SUCCESS! An email has been sent to ${
-            user.local.email
-          } with a password reset link.`
-        );
-        return res.redirect("/forgot");
-      });
-    } catch {
-      err => {
-        if (err) return next(err);
-        res.redirect("/forgot");
-      };
-    }
+    };
+    await smtpTransport.sendMail(mailOptions, err => {
+      console.log("mail sent");
+      req.flash(
+        "forgotMessage",
+        `SUCCESS! An email has been sent to ${
+          user.local.email
+        } with a password reset link.`
+      );
+      return res.redirect("/forgot");
+    });
   });
 
   // reset password page
@@ -512,86 +489,80 @@ export const authRoutes = (app, passport, keys) => {
   });
 
   app.post("/reset/:token", async (req, res, next) => {
-    try {
-      // find the user based on the reset token... check and see if it's still active
-      const user = await User.findOne(
-        {
-          resetPasswordToken: req.params.token,
-          resetPasswordTokenExpires: { $gt: Date.now() }
-        },
-        (err, user) => {
-          if (!user) {
-            req.flash(
-              "resetMessage",
-              "Sorry, password reset token is expired or invalid"
-            );
-            return res.redirect("back");
-          }
-
-          // password validations
-
-          const errors = [];
-
-          let password = req.body.password;
-
-          if (password !== req.body.confirmPassword) {
-            errors.push("The passwords do not match.");
-          }
-          if (password.length < 8) {
-            errors.push("The password is too short.");
-          }
-          if (!password.match(/[A-Z]/)) {
-            errors.push("Password must contain at least one capital letter.");
-          }
-          if (!password.match(/[a-z]/)) {
-            errors.push("Password must contain at least one lowercase letter.");
-          }
-          if (!password.match(/[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/)) {
-            errors.push("Password must contain at least one special symbol.");
-          }
-
-          if (errors.length > 0) {
-            req.flash("resetMessage", errors);
-            return res.redirect("back");
-          }
-
-          // if no errors, change the password
-
-          console.log(user);
-          let userLocal = user.local;
-          userLocal.password = user.generateHash(req.body.password);
-          user.resetPasswordToken = undefined;
-          user.resetPasswordTokenExpires = undefined;
-          user.save(err => {
-            return user;
-          });
+    // find the user based on the reset token... check and see if it's still active
+    const user = await User.findOne(
+      {
+        resetPasswordToken: req.params.token,
+        resetPasswordTokenExpires: { $gt: Date.now() }
+      },
+      (err, user) => {
+        if (!user) {
+          req.flash(
+            "resetMessage",
+            "Sorry, password reset token is expired or invalid"
+          );
+          return res.redirect("back");
         }
-      );
 
-      // email logic to notify password has been changed
-      const smtpTransport = await nodemailer.createTransport({
-        service: "Gmail",
-        auth: {
-          user: "getupandplay1@gmail.com",
-          pass: keys().gmailPW
+        // password validations
+
+        const errors = [];
+
+        let password = req.body.password;
+
+        if (password !== req.body.confirmPassword) {
+          errors.push("The passwords do not match.");
         }
-      });
-      const mailOptions = await {
-        to: user.local.email,
-        from: "GetUpAndPlay1@gmail.com",
-        subject: "Your password has been changed.",
-        text: `This is to confirm that ${
-          user.local.email
-        }'s password has been updated.`
-      };
-      await smtpTransport.sendMail(mailOptions, err => {
-        req.flash("resetMessage", `SUCCESS! Your password has been changed.`);
-        return res.redirect("/login");
-      });
-    } catch {
-      err => {
-        res.redirect("/login");
-      };
-    }
+        if (password.length < 8) {
+          errors.push("The password is too short.");
+        }
+        if (!password.match(/[A-Z]/)) {
+          errors.push("Password must contain at least one capital letter.");
+        }
+        if (!password.match(/[a-z]/)) {
+          errors.push("Password must contain at least one lowercase letter.");
+        }
+        if (!password.match(/[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/)) {
+          errors.push("Password must contain at least one special symbol.");
+        }
+
+        if (errors.length > 0) {
+          req.flash("resetMessage", errors);
+          return res.redirect("back");
+        }
+
+        // if no errors, change the password
+
+        console.log(user);
+        let userLocal = user.local;
+        userLocal.password = user.generateHash(req.body.password);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordTokenExpires = undefined;
+        user.save(err => {
+          return user;
+        });
+      }
+    );
+
+    // email logic to notify password has been changed
+    const smtpTransport = await nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "getupandplay1@gmail.com",
+        pass: keys().gmailPW
+      }
+    });
+    const mailOptions = await {
+      to: user.local.email,
+      from: "GetUpAndPlay1@gmail.com",
+      subject: "Your password has been changed.",
+      text: `This is to confirm that ${
+        user.local.email
+      }'s password has been updated.`
+    };
+    await smtpTransport.sendMail(mailOptions, err => {
+      req.flash("resetMessage", `SUCCESS! Your password has been changed.`);
+      return res.redirect("/login");
+    });
   });
 };
