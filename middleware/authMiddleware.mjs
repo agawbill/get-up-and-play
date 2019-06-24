@@ -13,3 +13,10 @@ export const checkLocal = (req, res, next) => {
   }
   res.redirect("connect/local");
 };
+
+export const checkConfirmed = (req, res, next) => {
+  if (req.user.local.confirmed) {
+    return next();
+  }
+  res.redirect("confirm-local");
+};

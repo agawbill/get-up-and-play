@@ -1,4 +1,8 @@
-import { isLoggedIn, checkLocal } from "../middleware/authMiddleware.mjs";
+import {
+  isLoggedIn,
+  checkLocal,
+  checkConfirmed
+} from "../middleware/authMiddleware.mjs";
 import User from "../models/User.mjs";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
@@ -43,7 +47,7 @@ export const authRoutes = (app, passport, keys) => {
     res.redirect("/");
   });
 
-  app.get("/profile", isLoggedIn, checkLocal, (req, res) => {
+  app.get("/profile", isLoggedIn, checkLocal, checkConfirmed, (req, res) => {
     res.render("profile.ejs", {
       user: req.user
     });
