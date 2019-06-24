@@ -62,12 +62,13 @@ export const authPassport = (passport, keys) => {
 
           if (existingUser) {
             errors.push("That email is already taken.");
+            if (existingUser.local.confirmed == false) {
+              errors.push(
+                "That email is already registered. Login with your previously entered credentials to generate a new email to confirm your email address, or check your inbox for a confirmation link that was already sent."
+              );
+            }
           }
-          if (existingUser.local.confirmed == undefined) {
-            errors.push(
-              "That email is already registered. <a href='/login'>Log in</a> to generate a new email to confirm your email address, or check your inbox for a confirmation link that was already sent."
-            );
-          }
+
           if (email.indexOf("@") == -1) {
             errors.push("Email is not a valid email.");
           }
