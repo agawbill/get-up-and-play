@@ -39,106 +39,119 @@ export const authPassport = (passport, keys) => {
 
         //  Whether we're signing up or connecting an account, we'll need
         //  to know if the email address is in use.
-        await User.findOne({ "local.email": email }, (err, existingUser) => {
-          // if there are any errors, return the error
-          if (err) return done(err);
 
-          // const confirmPassword = req.body.confirmPassword;
+        const existingUser = await User.findOne({ "local.email": email });
+        const tempUser = await User.findOne({ "local.temp_email": email });
 
-          // validations for email and password are below
+        // if there are any errors, return the error
 
-          // signUpValidator(
-          //   req,
-          //   email,
-          //   firstName,
-          //   lastName,
-          //   existingUser,
-          //   password,
-          //   confirmPassword,
-          //   done
-          // );
+        // const confirmPassword = req.body.confirmPassword;
 
-          const errors = [];
+        // validations for email and password are below
 
-          if (existingUser) {
-            errors.push("That email is already taken.");
-            if (existingUser.local.confirmed == false) {
-              errors.push(
-                "That email is already registered. Login with your previously entered credentials to generate a new email to confirm your email address, or check your inbox for a confirmation link that was already sent."
-              );
-            }
-          }
+        // signUpValidator(
+        //   req,
+        //   email,
+        //   firstName,
+        //   lastName,
+        //   existingUser,
+        //   password,
+        //   confirmPassword,
+        //   done
+        // );
 
-          if (email.indexOf("@") == -1) {
-            errors.push("Email is not a valid email.");
-          }
-          if (email.match(/[-!$%^&*()_+|~=`{}\[\]:\/;<>?,#]/)) {
-            errors.push("Email is not a valid email.");
-          }
-          if (password !== req.body.confirmPassword) {
-            errors.push("The passwords do not match.");
-          }
-          if (password.length < 8) {
-            errors.push("The password is too short.");
-          }
-          if (!password.match(/[A-Z]/)) {
-            errors.push("Password must contain at least one capital letter.");
-          }
-          if (!password.match(/[a-z]/)) {
-            errors.push("Password must contain at least one lowercase letter.");
-          }
-          if (!password.match(/[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/)) {
-            errors.push("Password must contain at least one special symbol.");
-          }
-          if (firstName < 1) {
-            errors.push("First name must be at least one character.");
-          }
-          if (firstName.match(/[0-9!$%^&*()_+|~={}\[\]:\/;<>?,.@#]/)) {
-            errors.push("First name is not valid.");
-          }
-          if (lastName < 1) {
-            errors.push("Last name must be at least one character.");
-          }
-          if (lastName.match(/[0-9!$%^&*()_+|~={}\[\]:\/;<>?,.@#]/)) {
-            errors.push("Last name is not valid.");
-          }
-          if (errors.length > 0) {
-            return done(null, false, req.flash("signupMessage", errors));
-          }
+        const errors = [];
 
-          //  If we're logged in, we're connecting a new local account. This is accomplished by looking for an active session
-          if (req.user) {
-            let user = req.user;
-            user.local.email = email;
-            user.local.password = user.generateHash(password);
-            user.local.firstName = firstName;
-            user.local.lastName = lastName;
-            user.local.fullName = `${firstName} ${lastName}`;
-            user.local.confirmed = false;
-            user.save(err => {
-              if (err) throw err;
-              return done(null, user);
-            });
+        if (existingUser) {
+          errors.push("That email is already taken.");
+          if (existingUser.local.confirmed == false) {
+            errors.push(
+              "That email is already registered. Login with your previously entered credentials to generate a new email to confirm your email address, or check your inbox for a confirmation link that was already sent."
+            );
           }
-          //  We're not logged in, so we're creating a brand new user.
-          else {
-            // create the user
-            let newUser = new User();
+        }
 
-            newUser.local.email = email;
-            newUser.local.firstName = firstName;
-            newUser.local.lastName = lastName;
-            newUser.local.fullName = `${firstName} ${lastName}`;
-            newUser.local.password = newUser.generateHash(password);
-            newUser.local.confirmed = false;
+        if (email.indexOf("@") == -1) {
+          errors.push("Email is not a valid email.");
+        }
+        if (email.match(/[-!$%^&*()_+|~=`{}\[\]:\/;<>?,#]/)) {
+          errors.push("Email is not a valid email.");
+        }
+        if (password !== req.body.confirmPassword) {
+          errors.push("The passwords do not match.");
+        }
+        if (password.length < 8) {
+          errors.push("The password is too short.");
+        }
+        if (!password.match(/[A-Z]/)) {
+          errors.push("Password must contain at least one capital letter.");
+        }
+        if (!password.match(/[a-z]/)) {
+          errors.push("Password must contain at least one lowercase letter.");
+        }
+        if (!password.match(/[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/)) {
+          errors.push("Password must contain at least one special symbol.");
+        }
+        if (firstName < 1) {
+          errors.push("First name must be at least one character.");
+        }
+        if (firstName.match(/[0-9!$%^&*()_+|~={}\[\]:\/;<>?,.@#]/)) {
+          errors.push("First name is not valid.");
+        }
+        if (lastName < 1) {
+          errors.push("Last name must be at least one character.");
+        }
+        if (lastName.match(/[0-9!$%^&*()_+|~={}\[\]:\/;<>?,.@#]/)) {
+          errors.push("Last name is not valid.");
+        }
+        if (errors.length > 0) {
+          return done(null, false, req.flash("signupMessage", errors));
+        }
 
-            newUser.save(function(err) {
-              if (err) throw err;
+        //  If we're logged in, we're connecting a new local account. This is accomplished by looking for an active session
+        if (req.user) {
+          let user = req.user;
+          user.local.email = email;
+          user.local.password = user.generateHash(password);
+          user.local.firstName = firstName;
+          user.local.lastName = lastName;
+          user.local.fullName = `${firstName} ${lastName}`;
+          user.local.confirmed = false;
+          user.save(err => {
+            if (err) throw err;
+            return done(null, user);
+          });
+        } else if (tempUser) {
+          tempUser.local.email = email;
+          tempUser.local.password = tempUser.generateHash(password);
+          tempUser.local.firstName = firstName;
+          tempUser.local.lastName = lastName;
+          tempUser.local.fullName = `${firstName} ${lastName}`;
+          tempUser.local.confirmed = false;
+          tempUser.local.temp_email = undefined;
+          tempUser.save(err => {
+            if (err) throw err;
+            return done(null, tempUser);
+          });
+        }
+        //  We're not logged in, so we're creating a brand new user.
+        else {
+          // create the user
+          let newUser = new User();
 
-              return done(null, newUser);
-            });
-          }
-        });
+          newUser.local.email = email;
+          newUser.local.firstName = firstName;
+          newUser.local.lastName = lastName;
+          newUser.local.fullName = `${firstName} ${lastName}`;
+          newUser.local.password = newUser.generateHash(password);
+          newUser.local.confirmed = false;
+
+          newUser.save(function(err) {
+            if (err) throw err;
+
+            return done(null, newUser);
+          });
+        }
       }
     )
   );

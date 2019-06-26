@@ -322,31 +322,31 @@ export const authRoutes = (app, passport, keys) => {
     res.send("success!");
   });
 
-  app.get("/resend-token/:token", async (req, res) => {
-    let user = req.user;
-    let date = Date.now();
-    if (user) {
-      if (user.local.confirmed == true) {
-        return res.redirect("/profile");
-      } else if (user.local.confirmTokenExpires < date) {
-        res.render("confirmed-local", {
-          expiredToken: false,
-          token: req.params.token,
-          message: req.flash("confirmEmail")
-        });
-      }
-    } else {
-      const user = await User.findOne({
-        "local.confirmToken": req.params.token
-      });
-      res.render("confirmed-local", {
-        expiredToken: true,
-        email: user.local.email,
-        token: req.params.token,
-        message: req.flash("confirmEmail")
-      });
-    }
-  });
+  // app.get("/resend-token/:token", async (req, res) => {
+  //   let user = req.user;
+  //   let date = Date.now();
+  //   if (user) {
+  //     if (user.local.confirmed == true) {
+  //       return res.redirect("/profile");
+  //     } else if (user.local.confirmTokenExpires < date) {
+  //       res.render("confirmed-local", {
+  //         expiredToken: false,
+  //         token: req.params.token,
+  //         message: req.flash("confirmEmail")
+  //       });
+  //     }
+  //   } else {
+  //     const user = await User.findOne({
+  //       "local.confirmToken": req.params.token
+  //     });
+  //     res.render("confirmed-local", {
+  //       expiredToken: true,
+  //       email: user.local.email,
+  //       token: req.params.token,
+  //       message: req.flash("confirmEmail")
+  //     });
+  //   }
+  // });
 
   app.post("/resend-token/:token", async (req, res) => {
     // create token

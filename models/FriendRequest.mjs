@@ -14,7 +14,7 @@ const friendRequestSchema = new Schema({
       ref: "User" // ref refers to the model that we are going to use here. Which is User.
     }
   },
-  status: int
+  status: Number
 });
 
 export default mongoose.model("friendRequests", friendRequestSchema);

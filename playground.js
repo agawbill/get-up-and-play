@@ -95,3 +95,69 @@ try {
 //     }
 //   );
 // });
+
+const endpoint = "/search-users";
+const search = document.querySelector(".search");
+const suggestions = document.querySelector(".suggestions");
+
+const sendSearch = event => {
+  let searchItem = event.target.value;
+  let dataToSend = JSON.stringify({ query: searchItem });
+  console.log(searchItem);
+  console.log(dataToSend);
+
+  event.preventDefault();
+  fetch(endpoint, {
+    credentials: "same-origin",
+    mode: "same-origin",
+    method: "post",
+    headers: { "content-type": "application/json" },
+    body: dataToSend
+  })
+    .then(resp => {
+      if (resp.status == 200) {
+        console.log(resp);
+        return resp;
+      } else {
+        console.log("Status: " + resp.status);
+
+        return Promise.reject("server");
+      }
+    })
+
+    .then(dataJson => {
+      dataJson.json().then(data => {
+        console.log("success!");
+        let users = [...data];
+
+        if (users.length !== 0) {
+          const html = users
+            .map(user => {
+              // console.log(user);
+              return `
+            <li>
+                ${user}
+            </li>
+
+        `;
+            })
+            .join("");
+
+          return (suggestions.innerHTML = html);
+        }
+        suggestions.innerHTML = "";
+      });
+    })
+
+    .catch(err => {
+      if (err == "server") {
+        suggestions.innerHTML = `</br>Sorry, something went wrong. Please try again.`;
+      }
+      console.log(err);
+      return;
+    });
+};
+
+search.addEventListener("change", sendSearch);
+
+search.addEventListener("keyup", sendSearch);

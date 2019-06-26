@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Type Ahead 👀</title>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<a href="#" id="requestLink"></a>
+
+
+  <form class="search-form">
+
+    <input type="text" class="search" placeholder="Enter Name">
+
+    <ul class="suggestions">
+
+      <li>Names will display here</li>
+
+    </ul>
+
+  </form>
+
+<script>
+
+// friend search logic/code
+
+const searchEndpoint = "/friend/search-users";
+const search = document.querySelector(".search");
+const suggestions = document.querySelector(".suggestions");
+
+const sendSearch = event => {
+  let searchItem = event.target.value;
+  let dataToSend = JSON.stringify({ query: searchItem });
+  console.log(searchItem);
+  console.log(dataToSend);
+
+  event.preventDefault();
+  fetch(searchEndpoint, {
+    credentials: "same-origin",
+    mode: "same-origin",
+    method: "post",
+    headers: { "content-type": "application/json" },
+    body: dataToSend
+  })
+    .then(resp => {
+      if (resp.status == 200) {
+        console.log(resp);
+        return resp;
+      } else {
+        console.log("Status: " + resp.status);
+
+        return Promise.reject("server");
+      }
+    })
+
+    .then(dataJson => {
+      dataJson.json().then(users => {
+        console.log("success!");
+        if (search.value !== '') {
+          const html = users
+            .map(user => {
+              return `
+            <li>
+                ${user.name} (${user.email}) - <a href="#" id="requestLink">Send Friend Request</a>
+            </li>
+        `;
+            })
+            .join("");
+
+
+          return (suggestions.innerHTML = html);
+        }
+        suggestions.innerHTML = "";
+
+        requestLink.addEventListener("click", sendRequest);
+      });
+    })
+
+    .catch(err => {
+      if (err == "server") {
+        suggestions.innerHTML = `</br>Sorry, something went wrong. Please try again.`;
+      }
+      console.log(err);
+      return;
+    });
+};
+
+search.addEventListener("change", sendSearch);
+
+search.addEventListener("keyup", sendSearch);
+
+
+// friend request logic/code
+
+document.addEventListener("click",()=>{
+  if(event.target.id=='requestLink'){
+    sendRequest();
+  }
+
+});
+
+const sendRequest=()=>{
+  console.log('it worked');
+};
+
+
+
+
+
+</script>
+
+</body>
+
+</html>
