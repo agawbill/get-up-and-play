@@ -113,12 +113,16 @@ export const friendRoutes = app => {
       }
     });
 
+    console.console.log("filtered users after splice", filteredUsers);
+
     const queriedUsers = filteredUsers.filter(user => {
       let query = req.body.query;
       let name = user.name;
       const regex = new RegExp(query, "gi");
       return name.match(regex);
     });
+
+    console.console.log("queried users, matched", queriedUsers);
 
     return res.send(queriedUsers);
   });
