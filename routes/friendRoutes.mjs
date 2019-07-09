@@ -101,14 +101,10 @@ export const friendRoutes = app => {
 
     console.log("filtered users after filter", filteredUsers);
     //
-    // let index = filteredUsers.length - 1;
-    //
-    // while (index >= 0) {
-    //   console.log("hey");
-    // }
+    let index = filteredUsers.length - 1;
 
-    filteredUsers.forEach((person, index) => {
-      if (person !== undefined) {
+    while (index >= 0) {
+      if (filteredUsers[index] !== undefined) {
         console.log("the person, to make sure it's logged", person);
         let indexOfRequest = filteredRequests.indexOf(person.userId);
         console.log("the index", indexOfRequest);
@@ -116,8 +112,22 @@ export const friendRoutes = app => {
           console.log("what's being removed", filteredUsers.splice(index, 1));
           filteredUsers.splice(index, 1);
         }
+      } else {
+        index -= 1;
       }
-    });
+    }
+
+    // filteredUsers.forEach((person, index) => {
+    //   if (person !== undefined) {
+    //     console.log("the person, to make sure it's logged", person);
+    //     let indexOfRequest = filteredRequests.indexOf(person.userId);
+    //     console.log("the index", indexOfRequest);
+    //     if (indexOfRequest >= 0) {
+    //       console.log("what's being removed", filteredUsers.splice(index, 1));
+    //       filteredUsers.splice(index, 1);
+    //     }
+    //   }
+    // });
 
     console.console.log("filtered users after splice", filteredUsers);
 
