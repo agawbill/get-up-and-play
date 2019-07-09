@@ -111,6 +111,7 @@ export const friendRoutes = app => {
           filteredUsers.splice(index, 1);
         }
       }
+      return;
     });
 
     console.console.log("filtered users after splice", filteredUsers);
