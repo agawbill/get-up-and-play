@@ -100,8 +100,14 @@ export const friendRoutes = app => {
     });
 
     console.log("filtered users after filter", filteredUsers);
+    //
+    // let index = filteredUsers.length - 1;
+    //
+    // while (index >= 0) {
+    //   console.log("hey");
+    // }
 
-    await filteredUsers.forEach((person, index) => {
+    filteredUsers.forEach((person, index) => {
       if (person !== undefined) {
         console.log("the person, to make sure it's logged", person);
         let indexOfRequest = filteredRequests.indexOf(person.userId);
@@ -111,7 +117,6 @@ export const friendRoutes = app => {
           filteredUsers.splice(index, 1);
         }
       }
-      return;
     });
 
     console.console.log("filtered users after splice", filteredUsers);
