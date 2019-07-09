@@ -277,6 +277,7 @@ export const authRoutes = (app, passport, keys) => {
     if (user.local.confirmed == true) {
       return res.redirect("/profile");
     }
+    // if the token is not expired, render a page with expiredToken showing false, and user will be prompted to confirm email
     if (user.local.confirmTokenExpires > date) {
       res.render("confirmed-local", {
         expiredToken: false,
@@ -285,6 +286,7 @@ export const authRoutes = (app, passport, keys) => {
         message: req.flash("confirmEmail")
       });
     } else {
+      // if token is expired,  render a page with expiredToken true, and the user will be given the option to resend the email
       res.render("confirmed-local", {
         expiredToken: true,
         email: user.local.email,
@@ -307,10 +309,6 @@ export const authRoutes = (app, passport, keys) => {
           return;
         }
 
-        // password validations
-
-        // if no errors, change the password
-
         user.local.confirmed = true;
         user.local.confirmToken = undefined;
         user.local.confirmTokenExpires = undefined;
@@ -321,32 +319,6 @@ export const authRoutes = (app, passport, keys) => {
     );
     res.send("success!");
   });
-
-  // app.get("/resend-token/:token", async (req, res) => {
-  //   let user = req.user;
-  //   let date = Date.now();
-  //   if (user) {
-  //     if (user.local.confirmed == true) {
-  //       return res.redirect("/profile");
-  //     } else if (user.local.confirmTokenExpires < date) {
-  //       res.render("confirmed-local", {
-  //         expiredToken: false,
-  //         token: req.params.token,
-  //         message: req.flash("confirmEmail")
-  //       });
-  //     }
-  //   } else {
-  //     const user = await User.findOne({
-  //       "local.confirmToken": req.params.token
-  //     });
-  //     res.render("confirmed-local", {
-  //       expiredToken: true,
-  //       email: user.local.email,
-  //       token: req.params.token,
-  //       message: req.flash("confirmEmail")
-  //     });
-  //   }
-  // });
 
   app.post("/resend-token/:token", async (req, res) => {
     // create token
@@ -509,7 +481,7 @@ export const authRoutes = (app, passport, keys) => {
           return res.redirect("back");
         }
 
-        // password validations
+        // password validations--due to issues related to scope I have to do them directly in the route
 
         const errors = [];
 
@@ -538,7 +510,6 @@ export const authRoutes = (app, passport, keys) => {
 
         // if no errors, change the password
 
-        console.log(user);
         let userLocal = user.local;
         userLocal.password = user.generateHash(req.body.password);
         user.resetPasswordToken = undefined;

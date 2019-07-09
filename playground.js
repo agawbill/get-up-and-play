@@ -161,3 +161,43 @@ const sendSearch = event => {
 search.addEventListener("change", sendSearch);
 
 search.addEventListener("keyup", sendSearch);
+
+const sendRequest = () => {
+  const requestEndpoint = "/friend/send-request";
+  const dataToSend = JSON.stringify({
+    "sender.id": "hey",
+    "receiver.id": "hey"
+  });
+
+  event.preventDefault();
+  fetch(requestEndpoint, {
+    credentials: "same-origin",
+    mode: "same-origin",
+    method: "post",
+    headers: { "content-type": "application/json" },
+    body: dataToSend
+  })
+    .then(resp => {
+      if (resp.status == 200) {
+        console.log(resp);
+        return resp;
+      } else {
+        console.log("Status: " + resp.status);
+
+        return Promise.reject("server");
+      }
+    })
+
+    .then(dataJson => {
+      console.log("Request success!");
+      event.target.innerHTML = `x`;
+    })
+
+    .catch(err => {
+      if (err == "server") {
+        alertDiv.innerHTML = `</br>Sorry, something went wrong. Please try again.`;
+      }
+      console.log(err);
+      return;
+    });
+};

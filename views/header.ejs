@@ -1,0 +1,73 @@
+<a href="#" id="requestLink"></a>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">GetUp&Play!</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+        <li><a href="#">Link</a></li>
+      </ul>
+
+      <ul class="nav navbar-right">
+        <li>
+          <a href="/logout" class="btn btn-default btn-sm" style="margin-top:4px">Logout</a>
+
+      </li>
+
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="#" class="pendingLink">Pending Requests
+
+          <span class="badge badgeP">0</span>
+
+        </a>
+        <ul class="pending-requests">
+          None yet
+        </ul>
+
+      </li>
+
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="#" class="friendsLink">Received Requests
+
+          <span class="badge badgeR">0</span>
+
+        </a>
+        <ul class="friend-requests">
+          None yet
+        </ul>
+
+      </li>
+
+      </ul>
+
+
+      <form class="navbar-form navbar-right">
+
+        <div class="form-group">
+          <input type="text" class="search form-control" placeholder="Find Friends">
+          <ul class="suggestions" style="position: absolute; z-index: 5; background:  rgba(209, 209, 209, 0.5); padding-right: 10px; border-radius:5px;-webkit-box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);">
+
+          </ul>
+        </div>
+
+      </form>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>

@@ -34,7 +34,7 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mainRoutes(app);
+mainRoutes(app, express);
 authRoutes(app, passport, keys);
 authPassport(passport, keys);
 friendRoutes(app);

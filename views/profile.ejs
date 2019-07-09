@@ -9,15 +9,22 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
 
     <style>
-        body        { padding-top:80px; word-wrap:break-word; }
+        body        {word-wrap:break-word; }
+        .friend-requests {display: none; position: absolute; z-index: 5; margin-bottom:5px;background:  rgba(209, 209, 209, 0.5); padding-right: 10px; border-radius:5px; -webkit-box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);
+        -moz-box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);
+        box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);}
+        .pending-requests {display: none; position: absolute; z-index: 5; margin-bottom:5px;background:  rgba(209, 209, 209, 0.5); padding-right: 10px; border-radius:5px; -webkit-box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);
+        -moz-box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);
+        box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);}
     </style>
 </head>
 <body>
+<%- include header.ejs %>
 <div class="container">
 
     <div class="page-header text-center">
         <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+
     </div>
 
     <div class="row">
@@ -93,4 +100,10 @@
 
 </div>
 </body>
+<script>
+const currentUser=`<%=user.id%>`
+</script>
+<script src="/static/scripts/friendRequest.js"></script>
+<script src="/static/scripts/searchFriends.js"></script>
+<script src="/static/scripts/getRequests.js"></script>
 </html>
