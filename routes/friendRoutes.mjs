@@ -50,6 +50,8 @@ export const friendRoutes = app => {
       }
     );
 
+    console.log("existing user requests", existingSentRequests);
+
     await existingSentRequests.forEach(friend => {
       if (friend !== undefined && friend.status == 1)
         // changed from receiver
@@ -95,11 +97,11 @@ export const friendRoutes = app => {
 
     await filteredUsers.forEach((person, index) => {
       if (person !== undefined) {
-        console.log(person);
+        console.log("the person, to make sure it's logged", person);
         let indexOfRequest = filteredRequests.indexOf(person.userId);
-        console.log(indexOfRequest);
+        console.log("the index", indexOfRequest);
         if (indexOfRequest >= 0) {
-          console.log(filteredUsers.splice(index, 1));
+          console.log("what's being removed", filteredUsers.splice(index, 1));
           filteredUsers.splice(index, 1);
         }
       }
