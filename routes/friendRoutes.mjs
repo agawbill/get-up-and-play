@@ -17,6 +17,8 @@ export const friendRoutes = app => {
       "-twitter"
     ]);
 
+    console.log("all users before filter", users);
+
     // console.log(users);
 
     const currentUser = req.user;
@@ -38,6 +40,8 @@ export const friendRoutes = app => {
       }
     );
 
+    console.log("existing sent requests", existingReceivedRequests);
+
     const existingReceivedRequests = await FriendRequest.find(
       {
         "receiver.id": currentUser._id
@@ -50,7 +54,7 @@ export const friendRoutes = app => {
       }
     );
 
-    console.log("existing user requests", existingSentRequests);
+    console.log("existing sent requests", existingSentRequests);
 
     await existingSentRequests.forEach(friend => {
       if (friend !== undefined && friend.status == 1)
@@ -94,6 +98,8 @@ export const friendRoutes = app => {
         filteredUsers.push(new Member(user, email, userId));
       }
     });
+
+    console.log("filtered users after filter", filteredUsers);
 
     await filteredUsers.forEach((person, index) => {
       if (person !== undefined) {
