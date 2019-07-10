@@ -101,7 +101,6 @@ export const friendRoutes = app => {
 
     console.log("filtered users after filter", filteredUsers);
     //
-    const requestsToFilter = [];
 
     // for await (let value of filteredUsers[filteredUsers.length - 1]) {
     //   value -= 1;
@@ -128,18 +127,19 @@ export const friendRoutes = app => {
     //     index -= 1;
     //   }
     // }
-
-    await filteredUsers.forEach((person, index) => {
-      if (person !== undefined) {
-        console.log("the person, to make sure it's logged", person);
-        let indexOfRequest = filteredRequests.indexOf(person.userId);
-        console.log("the index", indexOfRequest);
-        if (indexOfRequest >= 0) {
-          console.log("what's being removed", filteredUsers.splice(index, 1));
-          requestsToFilter.push(person.userID);
-        }
-      }
-    });
+    //
+    // await filteredUsers.forEach((person, index) => {
+    //   if (person !== undefined) {
+    //     console.log("the person, to make sure it's logged", person);
+    //     let indexOfRequest = filteredRequests.indexOf(person.userId);
+    //     console.log("the index", indexOfRequest);
+    //     if (indexOfRequest >= 0) {
+    //       console.log("what's being removed", filteredUsers.splice(index, 1));
+    //       console.log(person.userId);
+    //       requestsToFilter.push(person.userId);
+    //     }
+    //   }
+    // });
 
     // const newFilteredUsers=  await filteredUsers.filter((person, index) => {
     //     if
@@ -157,22 +157,39 @@ export const friendRoutes = app => {
     //   }
     // });
 
-    console.console.log("filtered users after splice", requestsToFilter);
+    // await filteredUsers.forEach((person, index) => {
+    //   if (person !== undefined) {
+    //     console.log("the person, to make sure it's logged", person);
+    //     let indexOfRequest = filteredRequests.indexOf(person.userId);
+    //     indexesOfRequests.push(indexOfRequest);
+    //     console.log("the index", indexOfRequest);
+    //     if (indexOfRequest >= 0) {
+    //       console.log("what's being removed", filteredUsers.splice(index, 1));
+    //       filteredUsers.splice(index, 1);
+    //     }
+    //   }
+    // });
 
-    const newFilteredUsers = await requestsToFilter.filter((person, index) => {
-      return filteredUsers.indexOf(person) === -1;
+    // console.console.log("filtered users after splice", requestsToFilter);
+
+    const newFilteredUsers = await filteredUsers.filter((person, index) => {
+      if (person !== undefined) {
+        console.log("the person, to make sure it's logged", person);
+
+        return filteredRequests.indexOf(person.userId) === -1;
+      }
     });
 
     console.log("new filtered users", newFilteredUsers);
 
-    const queriedUsers = filteredUsers.filter(user => {
+    const queriedUsers = newFilteredUsers.filter(user => {
       let query = req.body.query;
       let name = user.name;
       const regex = new RegExp(query, "gi");
       return name.match(regex);
     });
 
-    console.console.log("queried users, matched", queriedUsers);
+    console.log("queried users, matched", queriedUsers);
 
     return res.send(queriedUsers);
   });
