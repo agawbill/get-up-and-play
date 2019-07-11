@@ -201,3 +201,75 @@ const sendRequest = () => {
       return;
     });
 };
+
+//
+
+// for await (let value of filteredUsers[filteredUsers.length - 1]) {
+//   value -= 1;
+//   if (filteredUsers[index] !== undefined) {
+//     console.log("the person, to make sure it's logged", person);
+//     let indexOfRequest = filteredRequests.indexOf(person.userId);
+//     console.log("the index", indexOfRequest);
+//     if (indexOfRequest >= 0) {
+//       console.log("what's being removed", filteredUsers.splice(index, 1));
+//       filteredUsers.splice(index, 1);
+//     }
+//   }
+// }
+// while (index >= 0) {
+//   if (filteredUsers[index] !== undefined) {
+//     console.log("the person, to make sure it's logged", person);
+//     let indexOfRequest = filteredRequests.indexOf(person.userId);
+//     console.log("the index", indexOfRequest);
+//     if (indexOfRequest >= 0) {
+//       console.log("what's being removed", filteredUsers.splice(index, 1));
+//       filteredUsers.splice(index, 1);
+//     }
+//   } else {
+//     index -= 1;
+//   }
+// }
+//
+// await filteredUsers.forEach((person, index) => {
+//   if (person !== undefined) {
+//     console.log("the person, to make sure it's logged", person);
+//     let indexOfRequest = filteredRequests.indexOf(person.userId);
+//     console.log("the index", indexOfRequest);
+//     if (indexOfRequest >= 0) {
+//       console.log("what's being removed", filteredUsers.splice(index, 1));
+//       console.log(person.userId);
+//       requestsToFilter.push(person.userId);
+//     }
+//   }
+// });
+
+// const newFilteredUsers=  await filteredUsers.filter((person, index) => {
+//     if
+//   });
+// await filteredUsers.forEach((person, index) => {
+//   if (person !== undefined) {
+//     console.log("the person, to make sure it's logged", person);
+//     let indexOfRequest = filteredRequests.indexOf(person.userId);
+//     indexesOfRequests.push(indexOfRequest);
+//     console.log("the index", indexOfRequest);
+//     if (indexOfRequest >= 0) {
+//       console.log("what's being removed", filteredUsers.splice(index, 1));
+//       filteredUsers.splice(index, 1);
+//     }
+//   }
+// });
+
+// await filteredUsers.forEach((person, index) => {
+//   if (person !== undefined) {
+//     console.log("the person, to make sure it's logged", person);
+//     let indexOfRequest = filteredRequests.indexOf(person.userId);
+//     indexesOfRequests.push(indexOfRequest);
+//     console.log("the index", indexOfRequest);
+//     if (indexOfRequest >= 0) {
+//       console.log("what's being removed", filteredUsers.splice(index, 1));
+//       filteredUsers.splice(index, 1);
+//     }
+//   }
+// });
+
+// console.console.log("filtered users after splice", requestsToFilter);

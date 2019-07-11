@@ -1,6 +1,6 @@
 // send friend request function
 
-const sendRequest = (event, requestLink) => {
+const sendRequest = (event, requestLink, pendingValue) => {
   console.log(requestLink);
 
   const requestEndpoint = "/friend/send-request";
@@ -10,7 +10,7 @@ const sendRequest = (event, requestLink) => {
     receiverId: `${requestLink}`
   });
 
-  console.log(dataToSend);
+  // console.log(dataToSend);
 
   event.preventDefault();
   fetch(requestEndpoint, {
@@ -31,7 +31,10 @@ const sendRequest = (event, requestLink) => {
 
     .then(dataJson => {
       console.log("Request success!");
-      event.target.innerHTML = `x`;
+      console.log(dataJson);
+      badgeP.innerHTML = `${(requestValue += 1)}`;
+      event.target.innerHTML = `Sent!`;
+      fetchPending();
     })
 
     .catch(err => {
@@ -45,18 +48,24 @@ const sendRequest = (event, requestLink) => {
 
 // accept or deny request logic
 
-// const requestResponse = document.querySelector("#requestResponse");
-
-const friendResponse = (event, responseValue, responseType) => {
-  let requestContainer = document.querySelector(`#${event.target.id}`);
-
+const friendResponse = (event, responseValue, responseType, requestValue) => {
   event.preventDefault();
+
+  let [chosenId, getIndex] = event.target.id.split("-");
+
+  let selectedId = `#${chosenId}`;
+
+  let otherId =
+    selectedId === "#rejectResponse" ? "#acceptResponse" : "#rejectResponse";
+
+  let chosenResponse = document.querySelector(`${selectedId}-${getIndex}`);
+  let otherResponse = document.querySelector(`${otherId}-${getIndex}`);
+
+  // console.log("chosenResponse", chosenResponse);
+  // console.log("otherResponse", otherResponse);
 
   let accept = responseType == "accept" ? responseValue : undefined;
   let reject = responseType == "reject" ? responseValue : undefined;
-
-  console.log("accept", accept);
-  console.log("reject", reject);
 
   const addEndpoint = "/friend/add-friend";
 
@@ -64,10 +73,6 @@ const friendResponse = (event, responseValue, responseType) => {
     acceptId: accept,
     rejectId: reject
   });
-
-  console.log(dataToSend);
-
-  event.preventDefault();
 
   fetch(addEndpoint, {
     credentials: "same-origin",
@@ -87,9 +92,24 @@ const friendResponse = (event, responseValue, responseType) => {
 
     .then(dataJson => {
       console.log("Request success!");
+
       let requestValue = parseInt(badge.innerText);
-      badge.innerHTML = `${requestValue - 1}`;
-      requestContainer.innerHTML = `x`;
+
+      badge.innerHTML = `${(requestValue -= 1)}`;
+
+      if (accept !== undefined) {
+        chosenResponse.classList.remove("btn-primary");
+        chosenResponse.classList.add("btn-success", "disabled");
+        chosenResponse.innerText = "Accepted!";
+
+        otherResponse.classList.add("disabled");
+      } else {
+        chosenResponse.classList.remove("btn-primary");
+        chosenResponse.classList.add("btn-danger", "disabled");
+        chosenResponse.innerText = "Denied";
+
+        otherResponse.classList.add("disabled");
+      }
     })
 
     .catch(err => {
@@ -105,18 +125,19 @@ const friendResponse = (event, responseValue, responseType) => {
 
 // friend request logic/code
 
-document.addEventListener("click", () => {
+document.addEventListener("click", event => {
+  let targetId = event.target.id.split("-");
   if (event.target.id == "requestLink") {
     let requestLink = event.target.getAttribute("value");
-    sendRequest(event, requestLink);
+    sendRequest(event, requestLink, pendingValue);
   }
 
   if (
-    event.target.id == "acceptResponse" ||
-    event.target.id == "rejectResponse"
+    targetId.includes("acceptResponse") ||
+    targetId.includes("rejectResponse")
   ) {
     let responseValue = event.target.getAttribute("value");
     let responseType = event.target.getAttribute("data-value");
-    friendResponse(event, responseValue, responseType);
+    friendResponse(event, responseValue, responseType, pendingValue);
   }
 });

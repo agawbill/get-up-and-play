@@ -16,6 +16,10 @@ const pendingRequests = document.querySelector(".pending-requests");
 
 const friendRequests = document.querySelector(".friend-requests");
 
+let requestValue = 0;
+
+let pendingValue = 0;
+
 const fetchFriends = async () => {
   try {
     const request = await fetch(requestEndpoint, {
@@ -25,20 +29,21 @@ const fetchFriends = async () => {
     });
 
     const response = await request.json();
+    requestValue = response.length;
     badge.innerHTML = `${response.length}`;
 
     console.log(response);
     const html = response
-      .map(request => {
+      .map((request, index) => {
         let senderName = request.sender[0].local.fullName;
         let senderEmail = request.sender[0].local.email;
 
         return `
       <li style="z-index: 6;">
           ${senderName} (${senderEmail})
-          <br> <a href="/friend/add-friend" id="acceptResponse" value="${
-            request._id
-          }", data-value="accept">Accept</a> - <a href="/friend/add-friend" id="rejectResponse" value="${
+          <br> <a href="/friend/add-friend" class="btn btn-primary btn-sm" style="margin:5px;" role="button" id="acceptResponse-${index}" value="${
+          request._id
+        }", data-value="accept">Accept</a> &nbsp; <a href="/friend/add-friend" style="margin:5px;" class="btn btn-primary btn-sm" role="button" id="rejectResponse-${index}" value="${
           request._id
         }", data-value="reject">Reject</a>
       </li>
@@ -61,6 +66,7 @@ const fetchPending = async () => {
     });
 
     const response = await request.json();
+    pendingValue = response.length;
     badgeP.innerHTML = `${response.length}`;
 
     console.log(response);
@@ -89,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 friendsLink.addEventListener("click", () => {
-  console.log("hello");
   if (friendRequests.style.display == "block") {
     return (friendRequests.style.display = "none");
   }
