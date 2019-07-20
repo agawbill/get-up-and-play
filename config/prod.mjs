@@ -7,5 +7,7 @@ export const prod = {
   gmailPW: process.env.GMAILPW,
   cookieSecret: process.env.COOKIE_SECRET,
   facebookCallBackURI:
-    "https://getup-and-play.herokuapp.com/auth/facebook/callback"
+    "https://getup-and-play.herokuapp.com/auth/facebook/callback",
+  s3SecretAccessKey: process.env.S3SECRETACCCESSKEY,
+  s3AccessKeyId: process.env.S3ACCESSKEY
 };
