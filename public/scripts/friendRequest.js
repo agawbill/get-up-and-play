@@ -30,10 +30,13 @@ const sendRequest = (event, requestLink, pendingValue) => {
     })
 
     .then(dataJson => {
+      let sendButton = document.querySelector(`#${event.target.id}`);
       console.log("Request success!");
       console.log(dataJson);
       badgeP.innerHTML = `${(requestValue += 1)}`;
-      event.target.innerHTML = `Sent!`;
+      sendButton.classList.remove("btn-primary");
+      sendButton.classList.add("btn-success", "disabled");
+      sendButton.innerText = "Request Sent!";
       fetchPending();
     })
 
@@ -101,8 +104,8 @@ const friendResponse = (event, responseValue, responseType, requestValue) => {
         chosenResponse.classList.remove("btn-primary");
         chosenResponse.classList.add("btn-success", "disabled");
         chosenResponse.innerText = "Accepted!";
-
         otherResponse.classList.add("disabled");
+        fetchFriendList();
       } else {
         chosenResponse.classList.remove("btn-primary");
         chosenResponse.classList.add("btn-danger", "disabled");
@@ -127,7 +130,7 @@ const friendResponse = (event, responseValue, responseType, requestValue) => {
 
 document.addEventListener("click", event => {
   let targetId = event.target.id.split("-");
-  if (event.target.id == "requestLink") {
+  if (targetId.includes("requestLink")) {
     let requestLink = event.target.getAttribute("value");
     sendRequest(event, requestLink, pendingValue);
   }

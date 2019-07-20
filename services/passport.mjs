@@ -500,7 +500,7 @@ export const authPassport = (passport, keys) => {
               let newUser = await new User({
                 "local.temp_email": profile._json.email,
                 "facebook.id": profile.id, // set the users facebook id
-                "facebook.token": token, // we will save the token that facebook provides to the user
+                "facebook.token": token,
                 "facebook.name": `${profile._json.first_name} ${
                   profile._json.last_name
                 }`, // look at the passport user profile to see how names are returned

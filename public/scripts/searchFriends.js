@@ -34,14 +34,17 @@ const sendSearch = event => {
         console.log("success!");
         if (search.value !== "") {
           const html = users
-            .map(user => {
+            .map((user, index) => {
               const regex = new RegExp(search.value, "gi");
-              let fullName = user.name.replace(regex, `<b>$&</b>`);
+              let fullName = user.name.replace(
+                regex,
+                `<span style="background-color:yellow;"><b>$&</b></span>`
+              );
               return `
             <li style="z-index: 6;">
                 ${fullName} (${
                 user.email
-              })<br> <a href="#" id="requestLink" value="${
+              })<br> <a href="#" class="btn btn-primary btn-sm" style="margin:5px"; id="requestLink-${index}" value="${
                 user.userId
               }">Send Friend Request</a>
             </li>

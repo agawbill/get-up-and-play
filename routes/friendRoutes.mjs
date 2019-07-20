@@ -4,6 +4,36 @@ import User from "../models/User.mjs";
 import FriendRequest from "../models/FriendRequest.mjs";
 
 export const friendRoutes = app => {
+  app.get("/friend/friends", isLoggedIn, (req, res) => {
+    const user = req.user;
+    res.render("friends.ejs", { user: user });
+  });
+
+  app.get("/friend/get-friends", isLoggedIn, async (req, res) => {
+    const user = req.user;
+    const friends = await User.findOne({ _id: user.id }, (err, friends) => {
+      if (err) {
+        return res.send("this is the error", err);
+      }
+    })
+      .select("friends")
+      .populate({
+        path: "friends",
+        model: "users",
+        select: [
+          "-local.password",
+          "-friends",
+          "-facebook",
+          "-google",
+          "-twitter"
+        ]
+      })
+      .exec();
+
+    // console.log("friends", friends);
+    res.send(friends);
+  });
+
   app.get("/friend/search-users", async (req, res) => {
     const user = req.user;
     res.render("search-users", { user: user });
@@ -17,7 +47,7 @@ export const friendRoutes = app => {
       "-twitter"
     ]);
 
-    console.log("all users before filter", users);
+    // console.log("all users before filter", users);
 
     // console.log(users);
 
@@ -52,9 +82,9 @@ export const friendRoutes = app => {
       }
     );
 
-    console.log("existing sent requests", existingSentRequests);
-
-    console.log("existing sent requests", existingReceivedRequests);
+    // console.log("existing sent requests", existingSentRequests);
+    //
+    // console.log("existing sent requests", existingReceivedRequests);
 
     await existingSentRequests.forEach(friend => {
       if (friend !== undefined && friend.status == 1)
@@ -70,7 +100,7 @@ export const friendRoutes = app => {
       // filteredRequests.push(`${friend.receiver.id}`);
     });
 
-    console.log("filtered request ids", filteredRequests);
+    // console.log("filtered request ids", filteredRequests);
 
     class Member {
       constructor(name, email, userId) {
@@ -99,7 +129,7 @@ export const friendRoutes = app => {
       }
     });
 
-    console.log("filtered users after filter", filteredUsers);
+    // console.log("filtered users after filter", filteredUsers);
 
     const newFilteredUsers = await filteredUsers.filter((person, index) => {
       if (person !== undefined) {
@@ -109,7 +139,7 @@ export const friendRoutes = app => {
       }
     });
 
-    console.log("new filtered users", newFilteredUsers);
+    // console.log("new filtered users", newFilteredUsers);
 
     const queriedUsers = newFilteredUsers.filter(user => {
       let query = req.body.query;
@@ -118,7 +148,7 @@ export const friendRoutes = app => {
       return name.match(regex);
     });
 
-    console.log("queried users, matched", queriedUsers);
+    // console.log("queried users, matched", queriedUsers);
 
     return res.send(queriedUsers);
   });
@@ -157,7 +187,7 @@ export const friendRoutes = app => {
     );
 
     // add logic to find existing request to update here
-    console.log(getRequest);
+    // console.log(getRequest);
     if (!getRequest) {
       new FriendRequest({
         "sender.id": sender.id,
@@ -166,14 +196,14 @@ export const friendRoutes = app => {
       })
         .save()
         .then(result => {
-          console.log(result);
+          // console.log(result);
           return res.send(result);
         })
         .catch(err => {
           return res.send(err);
         });
     } else if (getRequest.status == 3) {
-      console.log("it's updating it", getRequest.status);
+      // console.log("it's updating it", getRequest.status);
       await getRequest.updateOne({ $set: { status: 1 } });
       return res.send(getRequest);
     }
@@ -215,7 +245,7 @@ export const friendRoutes = app => {
       })
       .exec();
 
-    console.log(usersRequests);
+    // console.log(usersRequests);
 
     res.send(usersRequests);
   });
@@ -333,5 +363,43 @@ export const friendRoutes = app => {
     }
     return res.send(friendRequest);
     // console.log(friendRequest);
+  });
+
+  app.post("/friend/delete-friend", isLoggedIn, async (req, res) => {
+    const currentUser = req.user;
+    const friendToDelete = req.body.friendId;
+
+    const currentUserFriends = await User.findOneAndUpdate(
+      { _id: currentUser.id },
+      { $pull: { friends: friendToDelete } },
+      { safe: true, multi: true }
+    );
+
+    const otherUserFriends = await User.findOneAndUpdate(
+      { _id: friendToDelete },
+      { $pull: { friends: currentUser.id } },
+      { safe: true, multi: true }
+    );
+
+    const friendIsSender = await FriendRequest.findOne(
+      { "sender.id": friendToDelete },
+      { "receiver.id": currentUser._id }
+    );
+
+    const userIsSender = await FriendRequest.findOne({
+      $and: [
+        { "sender.id": currentUser._id },
+        { "receiver.id": friendToDelete }
+      ]
+    });
+
+    console.log("user", userIsSender);
+    console.log("friend", friendIsSender);
+
+    const friendRequest = userIsSender == null ? friendIsSender : userIsSender;
+
+    await friendRequest.updateOne({ $set: { status: 3 } });
+
+    res.send("success");
   });
 };

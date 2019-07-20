@@ -273,3 +273,68 @@ const sendRequest = () => {
 // });
 
 // console.console.log("filtered users after splice", requestsToFilter);
+
+
+
+
+  app.post("/friend/delete-friend", isLoggedIn, async (req, res) => {
+    const currentUser = req.user;
+    const friendToDelete = req.body.friendId;
+
+    const currentUserFriends = await User.findOneAndUpdate(
+      { _id: currentUser.id },
+      { $pull: { friends: friendToDelete } },
+      { safe: true, multi: true }
+    );
+
+    const otherUserFriends = await User.findOneAndUpdate(
+      { _id: friendToDelete },
+      { $pull: { friends: currentUser.id } },
+      { safe: true, multi: true }
+    );
+
+    const friendRequestFromUser = await FriendRequest.findOne(
+      {
+        $and: [
+          { "receiver.id": currentUser.id },
+          { "sender.id": friendToDelete }
+        ]
+      },
+      (err, requests) => {
+        if (err) {
+          return res.send("Something went wrong", err);
+        }
+      }
+    );
+
+    const friendRequestFromReceiver = await FriendRequest.findOne(
+      {
+        $and: [
+          { "receiver.id": friendToDelete },
+          { "sender.id": currentUser.id }
+        ]
+      },
+
+      (err, requests) => {
+        if (err) {
+          return res.send("Something went wrong", err);
+        }
+      }
+    );
+
+    console.log("user", friendRequestFromUser);
+
+    console.log("receiver", friendRequestFromReceiver);
+
+    if (friendRequestFromReceiver) {
+      await friendRequestFromReceiver.updateOne({ $set: { status: 3 } });
+    } else {
+      await friendRequestFromUser.updateOne({ $set: { status: 3 } });
+    }
+
+    console.log("current user", currentUserFriends);
+    console.log("otherUserFriends", otherUserFriends);
+
+    res.send("success");
+  });
+};

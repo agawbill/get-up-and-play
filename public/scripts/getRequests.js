@@ -1,8 +1,8 @@
 // get requests logic/code
 
-const requestEndpoint = "friend/get-requests";
+const requestEndpoint = "/friend/get-requests";
 
-const pendingEndpoint = "friend/get-pending";
+const pendingEndpoint = "/friend/get-pending";
 
 const badge = document.querySelector(".badgeR");
 
@@ -82,7 +82,6 @@ const fetchPending = async () => {
   `;
       })
       .join("");
-
     return (pendingRequests.innerHTML = html);
   } catch (err) {
     console.log(err);

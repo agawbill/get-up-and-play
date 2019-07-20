@@ -14,9 +14,11 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-        <li><a href="#">Link</a></li>
+      <ul id="desktopNav" class="nav navbar-nav">
+        <!-- <li class="active"><a href="/profile" id="navProfile">Profile<span class="sr-only">(current)</span></a></li>
+        <li><a href="/groups" id="navGroups">Groups</a></li>
+        <li><a href="/friend/friends" id="navFriends">Friends</a></li>
+        <li><a href="/events" id="navEvents">Events</a></li> -->
       </ul>
 
       <ul class="nav navbar-right">
@@ -27,7 +29,7 @@
 
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li>
+        <li role="presentation">
           <a href="#" class="pendingLink">Pending Requests
 
           <span class="badge badgeP">0</span>
@@ -41,7 +43,7 @@
 
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li>
+        <li role="presentation">
           <a href="#" class="friendsLink">Received Requests
 
           <span class="badge badgeR">0</span>

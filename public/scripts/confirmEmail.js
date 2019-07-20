@@ -1,5 +1,4 @@
 const alertDiv = document.querySelector("#alertDiv");
-console.log("hey");
 window.addEventListener("DOMContentLoaded", () => {
   const dataToSend = JSON.stringify({ email: email });
   console.log(dataToSend);

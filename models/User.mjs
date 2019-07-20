@@ -69,6 +69,7 @@ const userSchema = new Schema(
         default: false
       }
     },
+    avatar: { type: String, default: "/static/images/default-profile.png" },
     resetPasswordToken: String,
     resetPasswordTokenExpires: Date,
     friends: [

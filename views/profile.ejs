@@ -18,7 +18,19 @@
         box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);}
         #rejectResponse{margin:5px;}
         #acceptResponse{margin:5px;}
+        img {
+          border-radius: 50%;
+          height: 25vh;
+          width: 25vh;
+          margin: 10px;
+        }
+
         .disabled{pointer-events: none;}
+
+        .well-radius{
+          border-radius: 50%;
+        }
+
     </style>
 </head>
 <body>
@@ -28,6 +40,37 @@
     <div class="page-header text-center">
         <h1><span class="fa fa-anchor"></span> Profile Page</h1>
 
+    </div>
+
+    <div class="row">
+    <div class="well col-md-4 col-md-offset-4">
+      <center>
+
+    <img src=<%=avatar%>>
+    <% if (message.length > 0) { %>
+
+            <% for (let i = 0; i < message.length; i++) { %>
+            </br><span style="color:red;"><%=  message[i] %></span <br>
+          <%  } %>
+
+    <% } %>
+    </center>
+    <p>
+      <form id="submitPic" action="add-avatar" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="exampleInputFile">File input</label>
+        <input id="image" type="file" name="image"  class="form-control-file" >
+        <% if(avatar==="/static/images/default-profile.png"){ %>
+        <p class="help-block">Upload a profile picture above.</p>
+        <% } else { %>
+          <p class="help-block">Update your profile picture above.</p>
+          <% } %>
+
+      </div>
+       <button class="btn btn-default">Upload</button>
+      </form>
+    </p>
+    </div>
     </div>
 
     <div class="row">
@@ -104,9 +147,13 @@
 </div>
 </body>
 <script>
-const currentUser=`<%=user.id%>`
+const currentUser=`<%=user.id%>`;
 </script>
 <script src="/static/scripts/friendRequest.js"></script>
 <script src="/static/scripts/searchFriends.js"></script>
 <script src="/static/scripts/getRequests.js"></script>
+<script src="/static/scripts/navSelector.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
 </html>

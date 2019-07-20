@@ -47,11 +47,31 @@ export const authRoutes = (app, passport, keys) => {
     res.redirect("/");
   });
 
-  app.get("/profile", isLoggedIn, checkLocal, checkConfirmed, (req, res) => {
-    res.render("profile.ejs", {
-      user: req.user
-    });
-  });
+  app.get(
+    "/profile",
+    isLoggedIn,
+    checkLocal,
+    checkConfirmed,
+    async (req, res) => {
+      const currentUser = await User.findOne(
+        { _id: req.user.id },
+        (err, user) => {
+          if (err) {
+            return req.user;
+          }
+          return user;
+        }
+      );
+
+      const avatar = currentUser.avatar;
+
+      res.render("profile.ejs", {
+        user: req.user,
+        message: req.flash("uploadMessage"),
+        avatar: avatar
+      });
+    }
+  );
 
   // google auth routes
 
