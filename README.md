@@ -5,6 +5,19 @@ Essentially, users can create public or private "events"  or "meet ups" centerin
 
 I plan to finish the back-end first, and then do the entire front-end using REACT. 
 
+<b><u>7/26/2019</u></b>
+
+The auth flow is complete (create account, link local account, register using local account, confirm email, reset password etc). I added a ton of logic to link all accounts to a registered email (meaning connected social media accounts). Users also won't be added until they confirm their email address (I added that functionality myself as well). 
+
+I also created an "instant" search feature for the "Friends Search" at the top of the page. As you type characters, the search will return names that match those characters. 
+
+I finished the Friend Request and Friend logic as well. Users can send, accept, or deny friend requests. Users can then delete friends after the fact.
+
+In the friend section, there's also a "friend filter" that works similiar to the new friend instant search I just described.
+
+Next up is creating groups, and then events.
+
+
 <b><u>4/26/2019</u></b>
 
 As of right now, I have the authentication flow completed. 
