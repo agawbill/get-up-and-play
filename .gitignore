@@ -1,4 +1,4 @@
 node_modules
 package-lock.json
-dev.mjs
+config/dev.mjs
 playground.js
