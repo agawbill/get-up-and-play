@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const desktopNav = document.querySelector("#desktopNav");
   const navHtml = `
     <li><a href="/profile" id="navProfile">Profile</a></li>
-    <li><a href="/groups" id="navGroups">Groups</a></li>
+    <li><a href="/groups/manage" id="navGroups">Groups</a></li>
     <li><a href="/friend/friends" id="navFriends">Friends</a></li>
     <li><a href="/events" id="navEvents">Events</a></li>
   `;

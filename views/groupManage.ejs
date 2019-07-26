@@ -1,0 +1,86 @@
+<!-- views/profile.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>GetUp&Play</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+
+    <style>
+        body        {word-wrap:break-word; }
+        .friend-requests {display: none; position: absolute; z-index: 5; margin-bottom:5px; margin-top:5px; background:  rgba(209, 209, 209, 0.5); padding-right: 10px; border-radius:5px; -webkit-box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);
+        -moz-box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);
+        box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);}
+        .pending-requests {display: none; position: absolute; z-index: 5; margin-bottom:5px; margin-top:5px; background:  rgba(209, 209, 209, 0.5); padding-right: 10px; border-radius:5px; -webkit-box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);
+        -moz-box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);
+        box-shadow: 10px 10px 20px -9px rgba(0,0,0,0.75);}
+        #rejectResponse{margin:5px;}
+        #acceptResponse{margin:5px;}
+
+        .disabled{pointer-events: none;}
+        img {
+          border-radius: 50%;
+          height: 100px;
+          width: 100px;
+          margin: 10px;
+          align: left;
+        }
+        .top-left{
+          position: absolute;
+          top: 5px;
+          right: 5px;
+          font-size: 20px;
+        }
+
+        #removeFriend{
+          cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+  <%- include header.ejs %>
+<div class="container">
+
+
+    <div class="page-header text-center">
+        <h1><span class="glyphicon glyphicon-globe"></span> Manage Groups</h1>
+
+    </div>
+
+
+    <div class="row">
+
+
+        <div class="col-sm-6">
+          <ul id="fizz" class="list-group well">
+
+
+          </ul>
+        </div>
+
+
+        <div class="col-sm-6">
+          <ul id="buzz" class="list-group well">
+
+          </ul>
+        </div>
+    </div>
+
+
+
+</div>
+
+</body>
+<script>
+const currentUser=`<%=user.id%>`
+</script>
+<script src="/static/scripts/friendRequest.js"></script>
+<script src="/static/scripts/searchFriends.js"></script>
+<script src="/static/scripts/getRequests.js"></script>
+<script src="/static/scripts/navSelector.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</html>
